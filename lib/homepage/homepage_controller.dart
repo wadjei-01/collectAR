@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-import '../../otherpages/productpage/product_model.dart';
-import '../../otherpages/productpage/product_view.dart';
+import '../otherpages/productpage/product_model.dart';
+import '../otherpages/productpage/product_view.dart';
 
 class HomePageController extends GetxController {
   List<String> tabs = ['All', 'Popular', 'Top Rated', 'Latest'];
@@ -26,8 +26,8 @@ class HomePageController extends GetxController {
   RefreshController refreshController = RefreshController();
 
   static const _perPage = 10;
-  bool allFetched = false;
-  bool isLoading = false;
+  RxBool allFetched = false.obs;
+  RxBool isLoading = false.obs;
   final List<Product> data = [];
   DocumentSnapshot? _lastDocument;
   late Query query;
@@ -47,8 +47,8 @@ class HomePageController extends GetxController {
       update();
     }
 
-    allFetched = false;
-    isLoading = false;
+    allFetched(false);
+    isLoading(false);
     _lastDocument = null;
     update();
 
@@ -60,10 +60,10 @@ class HomePageController extends GetxController {
   }
 
   Future<void> fetchFirebaseData() async {
-    if (!allFetched) {
-      if (isLoading) {}
+    if (allFetched.isFalse) {
+      if (isLoading.isTrue) {}
 
-      isLoading = true;
+      isLoading(true);
       update();
 
       if (_lastDocument != null) {
@@ -89,12 +89,12 @@ class HomePageController extends GetxController {
       });
 
       if ((pagedData.length < _perPage)) {
-        allFetched = true;
+        allFetched(true);
       } else {
         data.addAll(pagedData);
       }
 
-      isLoading = false;
+      isLoading(false);
       update();
     }
   }

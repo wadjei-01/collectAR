@@ -20,23 +20,27 @@ class ProductAdapter extends TypeAdapter<Product> {
       id: fields[0] as String,
       name: fields[1] as String,
       description: fields[2] as String,
-      price: fields[3] as String,
-      stock: fields[4] as int,
-      images: (fields[5] as List).cast<dynamic>(),
-      bookmarked: fields[6] as bool,
-      imageColour: fields[7] as dynamic,
-      primaryColour: fields[8] as String,
-      secondaryColour: fields[9] as String,
-      tetiaryColour: fields[10] as String,
-      dateAdded: fields[11] as dynamic,
-      category: fields[12] as String,
+      details: fields[3] as String,
+      materials: fields[4] as dynamic,
+      colorText: fields[5] as String,
+      price: fields[6] as double,
+      stock: fields[7] as int,
+      images: (fields[8] as List).cast<dynamic>(),
+      bookmarked: fields[9] as bool,
+      imageColour: fields[10] as dynamic,
+      primaryColour: fields[11] as String,
+      secondaryColour: fields[12] as String,
+      tetiaryColour: fields[13] as String,
+      dateAdded: fields[14] as dynamic,
+      category: fields[15] as String,
+      modelAR: fields[16] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, Product obj) {
     writer
-      ..writeByte(13)
+      ..writeByte(17)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -44,25 +48,33 @@ class ProductAdapter extends TypeAdapter<Product> {
       ..writeByte(2)
       ..write(obj.description)
       ..writeByte(3)
-      ..write(obj.price)
+      ..write(obj.details)
       ..writeByte(4)
-      ..write(obj.stock)
+      ..write(obj.materials)
       ..writeByte(5)
-      ..write(obj.images)
+      ..write(obj.colorText)
       ..writeByte(6)
-      ..write(obj.bookmarked)
+      ..write(obj.price)
       ..writeByte(7)
-      ..write(obj.imageColour)
+      ..write(obj.stock)
       ..writeByte(8)
-      ..write(obj.primaryColour)
+      ..write(obj.images)
       ..writeByte(9)
-      ..write(obj.secondaryColour)
+      ..write(obj.bookmarked)
       ..writeByte(10)
-      ..write(obj.tetiaryColour)
+      ..write(obj.imageColour)
       ..writeByte(11)
-      ..write(obj.dateAdded)
+      ..write(obj.primaryColour)
       ..writeByte(12)
-      ..write(obj.category);
+      ..write(obj.secondaryColour)
+      ..writeByte(13)
+      ..write(obj.tetiaryColour)
+      ..writeByte(14)
+      ..write(obj.dateAdded)
+      ..writeByte(15)
+      ..write(obj.category)
+      ..writeByte(16)
+      ..write(obj.modelAR);
   }
 
   @override

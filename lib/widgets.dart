@@ -172,7 +172,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
         padding: EdgeInsets.symmetric(horizontal: 30.w),
         child:
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          InkWell(
+          GestureDetector(
             onTap: () {
               Get.delete<ProductController>();
               Get.back();
@@ -234,10 +234,16 @@ TextFormField textField(TextEditingController textController, [String? hint]) {
 }
 
 InkWell button(
-    [dynamic onTap, Widget? widget, Color? containerColor, Color? textColor]) {
+    {dynamic onTap,
+    Widget? widget,
+    Color? containerColor,
+    Color? textColor,
+    double? height}) {
   return InkWell(
     onTap: onTap,
-    child: Container(
+    child: AnimatedContainer(
+      duration: Duration(milliseconds: 750),
+      height: height,
       decoration: BoxDecoration(
           color: containerColor ?? AppColors.primary,
           borderRadius: BorderRadius.circular(20.r)),
@@ -384,16 +390,14 @@ class CarouselIndicator extends StatelessWidget {
   }
 }
 
-onCardPressed(Product data, ProductController controller) {
+onCardPressed(Product data) async {
   try {
-    Get.to(() => const ProductScreen(),
-        preventDuplicates: false,
-        curve: Curves.easeInOut,
-        duration: Duration(milliseconds: 550),
-        arguments: data,
-        transition: Transition.fadeIn);
-    controller.getData(data);
-    controller.refresh();
+    Get.toNamed(
+      "/product",
+      preventDuplicates: false,
+      arguments: data,
+    )!;
+    // controller.onInitiate(data);
   } on RangeError catch (value) {
     print(value.message);
   }
@@ -471,7 +475,7 @@ class ProductCard extends StatelessWidget {
                     height: 15.h,
                   ),
                   Text(
-                    storedProducts.price,
+                    '₵ ${storedProducts.price.toStringAsFixed(2)}',
                     style: TextStyle(
                         fontFamily: 'Montserrat Black',
                         fontSize: 13,
@@ -484,6 +488,60 @@ class ProductCard extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class LoadingIndicator extends StatelessWidget {
+  LoadingIndicator({Key? key, this.progress}) : super(key: key);
+  double? progress;
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 70.r,
+      width: 70.r,
+      child: CircularProgressIndicator(
+        color: AppColors.primary,
+        value: progress,
+      ),
+    );
+  }
+}
+
+class ListOfItems extends StatelessWidget {
+  ListOfItems({Key? key, this.icon, required this.title, this.onTap})
+      : super(key: key);
+
+  final IconData? icon;
+  final String title;
+  void Function()? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: ListTile(
+        trailing: Icon(Icons.arrow_forward_ios_rounded),
+        contentPadding: const EdgeInsets.only(left: 0.0, right: 0.0),
+        horizontalTitleGap: 10,
+        leading: Container(
+          height: 35,
+          width: 35,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(30),
+              color: AppColors.lighten(AppColors.primary, 0.4)),
+          child: Icon(
+            icon,
+            color: Colors.black,
+          ),
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontFamily: 'Montserrat-SemiBold',
+          ),
         ),
       ),
     );

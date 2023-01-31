@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:navbar/otherpages/globals.dart';
 import 'package:navbar/models/user_model.dart' as userModel;
 import '../../main.dart';
+import '../../widgets.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -107,28 +108,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 color: Color.fromARGB(255, 208, 208, 208),
               ),
               itemBuilder: (context, index) {
-                return ListTile(
-                  trailing: Icon(Icons.arrow_forward_ios_rounded),
-                  contentPadding: const EdgeInsets.only(left: 0.0, right: 0.0),
-                  horizontalTitleGap: 10,
-                  leading: Container(
-                    height: 35,
-                    width: 35,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        color: AppColors.lighten(AppColors.primary, 0.4)),
-                    child: Icon(
-                      profileIcon[index],
-                      color: Colors.black,
-                    ),
-                  ),
-                  title: Text(
-                    profileInfo[index],
-                    style: const TextStyle(
-                      fontFamily: 'Montserrat-SemiBold',
-                    ),
-                  ),
-                );
+                return ListOfItems(
+                    icon: profileIcon[index], title: profileInfo[index]);
               },
               itemCount: profileInfo.length,
             ),

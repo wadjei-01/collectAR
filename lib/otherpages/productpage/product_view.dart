@@ -8,7 +8,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:navbar/collections/collections_view.dart';
 import 'package:navbar/main.dart';
-import 'package:navbar/mainpages/cart_page/cartcontroller.dart';
 import 'package:navbar/otherpages/productpage/product_model.dart';
 import 'package:navbar/otherpages/arsession.dart';
 import 'package:navbar/otherpages/globals.dart';
@@ -16,21 +15,19 @@ import 'package:navbar/models/user_model.dart' as userModels;
 import 'package:navbar/otherpages/productpage/product_controller.dart';
 import 'package:navbar/widgets.dart';
 import '../../collections/collections_controller.dart';
-import '../../mainpages/cart_page/cartmodel.dart';
-import '../../mainpages/homepage/homepage.dart';
+import '../../homepage/homepage.dart';
 
-class ProductScreen extends GetView<ProductController> {
-  const ProductScreen({super.key});
+class ProductScreen extends StatelessWidget {
+  ProductScreen({super.key});
   // final Product product;
+
+  final controller = Get.find<ProductController>();
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(ProductController());
     final bgColor = HexColor(controller.product.imageColour);
 
-    // final collectionsController = Get.put(CollectionsController());
     ScrollController sController = ScrollController();
-    PageController pageController = PageController();
 
     List<Widget>? listBanners;
 
@@ -40,6 +37,8 @@ class ProductScreen extends GetView<ProductController> {
               width: 1.sw,
               child: CachedNetworkImage(
                 imageUrl: controller.product.images[index + 1],
+                progressIndicatorBuilder: (context, url, progress) => Center(
+                    child: LoadingIndicator(progress: progress.progress)),
                 fit: BoxFit.fitWidth,
               ),
             ));
@@ -152,7 +151,7 @@ class ProductScreen extends GetView<ProductController> {
                         GetBuilder<ProductController>(builder: (control) {
                           return CustomExpansionTile(
                               title: "Product Details",
-                              text: controller.product.description);
+                              text: controller.product.details);
                         }),
                         GetBuilder<ProductController>(builder: (control) {
                           return CustomExpansionTile(
@@ -172,7 +171,7 @@ class ProductScreen extends GetView<ProductController> {
                           builder:
                               (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                             if (snapshot.hasData) {
-                              print(snapshot.data!.docs.length);
+                              // print(snapshot.data!.docs.length);
                               return snapshot.data!.docs.isEmpty
                                   ? const SizedBox()
                                   : Column(
@@ -226,8 +225,9 @@ class ProductScreen extends GetView<ProductController> {
                                                     child: ProductCard(
                                                         storedProducts: product,
                                                         onPressed: () {
-                                                          onCardPressed(product,
-                                                              controller);
+                                                          onCardPressed(
+                                                              product);
+                                                          controller.update();
                                                         }));
                                               }),
                                         ),
@@ -269,15 +269,12 @@ class ProductScreen extends GetView<ProductController> {
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Obx(
-                          () => ItemNumberButton(
-                            bgColor: HexColor(controller.product.imageColour),
-                            isAdd: false,
-                            number: controller.num.value,
-                            onCountChange: () {
-                              controller.decrement();
-                            },
-                          ),
+                        ItemNumberButton(
+                          bgColor: bgColor,
+                          isAdd: false,
+                          onCountChange: controller.decrement
+                          // controller.quantity.value--;
+                          ,
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -286,9 +283,9 @@ class ProductScreen extends GetView<ProductController> {
                             child: Center(
                               child: Obx(
                                 () => Text(
-                                    controller.num.value <= 9
-                                        ? '0${controller.num.value}'
-                                        : '${controller.num.value}',
+                                    controller.quantity.value <= 9
+                                        ? '0${controller.quantity.value.toString()}'
+                                        : '${controller.quantity.value.toString()}',
                                     style: TextStyle(
                                         fontFamily: 'Gotham Black',
                                         color: Colors.black,
@@ -298,89 +295,86 @@ class ProductScreen extends GetView<ProductController> {
                           ),
                         ),
                         ItemNumberButton(
-                          bgColor: HexColor(controller.product.imageColour),
+                          bgColor: bgColor,
                           isAdd: true,
-                          number: controller.num.value,
-                          onCountChange: () {
-                            controller.increment();
-                            print(controller.num.value);
-                          },
+                          onCountChange: controller.increment
+                          // controller.quantity.value++;
+                          // print(controller.quantity);
+                          ,
                         ),
                       ]),
                 ),
-                GetBuilder<CartController>(
-                    init: controller.cartVM,
-                    builder: (value) {
-                      return Obx(() => controller.cartVM.isAddToCart(
-                              controller.product.id, controller.num.value)
-                          ? ElevatedButton(
-                              onPressed: () {
-                                Fluttertoast.showToast(
-                                  msg: "Item is already added to cart",
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(35.r))),
-                                  elevation: 0,
-                                  primary: Colors.grey,
-                                  fixedSize: Size(650.w, 150.h)),
-                              child: const Text('Added',
-                                  style: TextStyle(
-                                      fontFamily: 'Gotham Book',
-                                      fontSize: 19,
-                                      fontWeight: FontWeight.w700)),
-                            )
-                          : ElevatedButton(
-                              onPressed: () {
-                                // addtoStoreCart();
-                                value.add(
-                                    controller.product.id,
-                                    controller.product.images[0],
-                                    controller.product.name,
-                                    controller.product.price,
-                                    controller.num.value,
-                                    bgColor);
-                                Fluttertoast.showToast(
-                                  msg: "Added to cart",
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(35.r))),
-                                  elevation: 0,
-                                  primary: bgColor,
-                                  fixedSize: Size(650.w, 150.h)),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    controller.product.price,
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 45.sp,
-                                        fontFamily: 'Montserrat-Bold',
-                                        color: Colors.white),
-                                  ),
-                                  Text(' | ',
-                                      style: TextStyle(
-                                        fontFamily: 'Gotham Black',
-                                        fontSize: 70.sp,
-                                      )),
-                                  SizedBox(
-                                    height: 58.1.r,
-                                    width: 70.r,
-                                    child: SvgPicture.asset(
-                                      'assets/images/icons/cart.svg',
-                                      fit: BoxFit.fill,
-                                    ),
-                                  )
-                                ],
+                Obx(() {
+                  return controller.isAdded.value == true
+                      ? ElevatedButton(
+                          onPressed: () {
+                            Fluttertoast.showToast(
+                              msg: "Item is already added to cart",
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(35.r))),
+                              elevation: 0,
+                              primary: Colors.grey,
+                              fixedSize: Size(650.w, 150.h)),
+                          child: const Text('Added',
+                              style: TextStyle(
+                                  fontFamily: 'Gotham Book',
+                                  fontSize: 19,
+                                  fontWeight: FontWeight.w700)),
+                        )
+                      : ElevatedButton(
+                          onPressed: () {
+                            // addtoStoreCart();
+                            controller.cart.add(
+                                controller.product.id,
+                                controller.product.images[0],
+                                controller.product.name,
+                                controller.product.price,
+                                controller.quantity.value,
+                                bgColor);
+                            controller.checkProduct();
+                            Fluttertoast.showToast(
+                              msg: "Added to cart",
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(35.r))),
+                              elevation: 0,
+                              primary: bgColor,
+                              fixedSize: Size(650.w, 150.h)),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                '₵ ${controller.product.price.toStringAsFixed(2)}',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 45.sp,
+                                    fontFamily: 'Montserrat-Bold',
+                                    color: Colors.white),
                               ),
-                            ));
-                    })
+                              Text(' | ',
+                                  style: TextStyle(
+                                    fontFamily: 'Gotham Black',
+                                    fontSize: 70.sp,
+                                  )),
+                              SizedBox(
+                                height: 58.1.r,
+                                width: 70.r,
+                                child: SvgPicture.asset(
+                                  'assets/images/icons/cart.svg',
+                                  fit: BoxFit.fill,
+                                ),
+                              )
+                            ],
+                          ),
+                        );
+                })
               ],
             ),
           ),
@@ -416,7 +410,6 @@ class ProductScreen extends GetView<ProductController> {
 class ItemNumberButton extends StatefulWidget {
   ItemNumberButton(
       {Key? key,
-      required this.number,
       required this.onCountChange,
       required this.isAdd,
       this.buttonSize,
@@ -424,7 +417,6 @@ class ItemNumberButton extends StatefulWidget {
       required this.bgColor})
       : super(key: key);
 
-  final int number;
   final bool isAdd;
   final double? buttonSize;
   final double? buttonRadius;
@@ -439,8 +431,8 @@ class _ItemNumberButtonState extends State<ItemNumberButton> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => widget.onCountChange(),
-      onLongPress: () => widget.onCountChange,
+      onTap: widget.onCountChange,
+      onLongPress: widget.onCountChange,
       child: Container(
         height: widget.buttonSize ?? 90.r,
         width: widget.buttonSize ?? 90.r,

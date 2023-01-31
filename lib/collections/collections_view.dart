@@ -1,19 +1,20 @@
-import 'package:dotted_border/dotted_border.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:navbar/collections/collection_page.dart';
 import 'package:navbar/collections/collections_controller.dart';
 import 'package:navbar/collections/collections_model.dart';
 import 'package:navbar/otherpages/globals.dart';
 import 'package:navbar/otherpages/productpage/product_model.dart';
 
+import '../box/boxes.dart';
 import '../widgets.dart';
 
 class CollectionsView extends GetView<CollectionsController> {
   CollectionsView({super.key});
-  // Product? product;
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +62,7 @@ class CollectionsView extends GetView<CollectionsController> {
                                     SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 2,
                                   mainAxisSpacing: 10.h,
-                                  childAspectRatio: 2.w / 2.h,
+                                  childAspectRatio: 2.w / 1.75.h,
                                   crossAxisSpacing: 10.w,
                                 ),
                                 itemCount: box.length,
@@ -78,6 +79,9 @@ class CollectionsView extends GetView<CollectionsController> {
                                               collectionsController
                                                   .addToCollection(index,
                                                       controller.product!);
+                                            } else {
+                                              Get.to(CollectionsPage(),
+                                                  arguments: box.get(index));
                                             }
                                           },
                                           onLongPress: () {
@@ -105,7 +109,10 @@ class CollectionsView extends GetView<CollectionsController> {
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     SizedBox(
-                                                      height: 320.h,
+                                                      height: 250.h,
+                                                      child: ImageList(
+                                                          collectionIndex:
+                                                              index),
                                                     ),
                                                     SizedBox(
                                                       width: double.infinity,
@@ -236,27 +243,28 @@ class CollectionsView extends GetView<CollectionsController> {
                     ),
                     button(
                         //TODO: Create method later
-                        () {
-                      if (newCollectionsController
-                          .textController.text.isNotEmpty) {
-                        collectionsController.newCollection(
-                            newCollectionsController.textController.text,
-                            newCollectionsController.screenPickerColor.value);
-                        print(newCollectionsController.textController.text);
-                        newCollectionsController.reset();
-                        Navigator.pop(context);
-                      } else {
-                        Get.snackbar(
-                          "Hi there!",
-                          "The collection needs a name",
-                          snackPosition: SnackPosition.TOP,
-                          colorText: AppColors.secondary,
-                          borderRadius: 20.r,
-                          backgroundColor: AppColors.primary,
-                        );
-                      }
-                    },
-                        Row(
+                        onTap: () {
+                          if (newCollectionsController
+                              .textController.text.isNotEmpty) {
+                            collectionsController.newCollection(
+                                newCollectionsController.textController.text,
+                                newCollectionsController
+                                    .screenPickerColor.value);
+                            print(newCollectionsController.textController.text);
+                            newCollectionsController.reset();
+                            Navigator.pop(context);
+                          } else {
+                            Get.snackbar(
+                              "Hi there!",
+                              "The collection needs a name",
+                              snackPosition: SnackPosition.TOP,
+                              colorText: AppColors.secondary,
+                              borderRadius: 20.r,
+                              backgroundColor: AppColors.primary,
+                            );
+                          }
+                        },
+                        widget: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
@@ -282,6 +290,88 @@ class CollectionsView extends GetView<CollectionsController> {
           );
         },
         context: context);
+  }
+}
+
+class ImageList extends StatelessWidget {
+  ImageList({super.key, required this.collectionIndex});
+  int collectionIndex;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 50.h),
+          child: AnimationLimiter(
+            child: GetBuilder<CollectionsController>(builder: (controller) {
+              return ListView.builder(
+                scrollDirection: Axis.horizontal,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: controller
+                    .collectionsList[collectionIndex].products!.length,
+                itemBuilder: (context, index) {
+                  return AnimationConfiguration.staggeredList(
+                    position: index,
+                    duration: const Duration(milliseconds: 1500),
+                    child: SlideAnimation(
+                      horizontalOffset: 50.0,
+                      child: FadeInAnimation(
+                          child: Align(
+                        widthFactor: 0.8,
+                        child: index >= 3
+                            ? const SizedBox()
+                            : Container(
+                                height: 130.r,
+                                width: 130.r,
+                                decoration: BoxDecoration(
+                                    color: HexColor(controller
+                                        .collectionsList[collectionIndex]
+                                        .products![index]
+                                        .imageColour),
+                                    borderRadius: BorderRadius.circular(75.r)),
+                                child: CachedNetworkImage(
+                                    imageUrl: controller
+                                        .collectionsList[collectionIndex]
+                                        .products![index]
+                                        .images[0]),
+                              ),
+                      )),
+                    ),
+                  );
+                },
+              );
+            }),
+          ),
+        ),
+        Get.put(CollectionsController())
+                    .collectionsList[collectionIndex]
+                    .products!
+                    .length >
+                3
+            ? Align(
+                widthFactor: 0.8,
+                child: Container(
+                  height: 130.r,
+                  width: 130.r,
+                  decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(75.r)),
+                  child: Center(
+                    child: Text(
+                      '+${Get.put(CollectionsController()).collectionsList[collectionIndex].products!.length - 3}',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Montserrat-Bold',
+                          fontSize: 50.sp),
+                    ),
+                  ),
+                ),
+              )
+            : SizedBox()
+      ],
+    );
   }
 }
 

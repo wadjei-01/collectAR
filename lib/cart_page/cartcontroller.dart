@@ -1,8 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:navbar/mainpages/cart_page/cartmodel.dart';
+import 'package:collection/collection.dart';
+import 'package:navbar/box/boxes.dart';
 
 import '../../collections/collections_controller.dart';
+import 'cartmodel.dart';
 
 class CartController extends GetxController {
   final box = Boxes.getCart();
@@ -11,18 +15,21 @@ class CartController extends GetxController {
     if (quantity > 1) quantity--;
   }
 
-  add(String id, String image, String name, String price, int quantity,
-      Color color) {
-    var priceValue = price.split('₵');
+  RxBool isExtended = false.obs;
 
-    if (checkID(id)[0]) {
+  add(String id, String image, String name, double price, int quantity,
+      Color color) {
+    if (box.values.firstWhereOrNull(
+          (element) => element.id == id,
+        ) !=
+        null) {
       box.putAt(
           checkID(id)[1],
           (CartModel(
               id: id,
               image: image,
               name: name,
-              price: double.parse(priceValue[1]),
+              price: price,
               quantity: quantity,
               color: color.value)));
       // list[checkID(id)[1]] = ;
@@ -32,7 +39,7 @@ class CartController extends GetxController {
           id: id,
           image: image,
           name: name,
-          price: double.parse(priceValue[1]),
+          price: price,
           quantity: quantity,
           color: color.value));
       print(id);
@@ -41,7 +48,7 @@ class CartController extends GetxController {
     update();
   }
 
-  total() {
+  totalCost() {
     double sum = 0;
     for (int i = 0; i < box.length; i++) {
       sum = sum + (box.getAt(i)!.price * box.getAt(i)!.quantity);
@@ -51,21 +58,28 @@ class CartController extends GetxController {
 
   findQuantity(String id) {
     int? quantity;
-    for (int i = 0; i < box.length; i++) {
-      if (box.getAt(i)!.id.contains(id)) {
-        print(quantity);
-        quantity = box.getAt(i)!.quantity;
-      }
+    var value = box.values.firstWhereOrNull(
+      (element) => element.id == id,
+    );
+    if (value != null) {
+      quantity = value.quantity;
     }
+
     return quantity;
   }
 
-  bool isAddToCart(String id, int quantity) {
+  bool isAddedToCart(String id, int quantity) {
     bool boolean = false;
-    for (int i = 0; i < box.length; i++) {
-      if (box.getAt(i)!.id.isCaseInsensitiveContains(id) &&
-          quantity == box.getAt(i)!.quantity) boolean = true;
+
+    var value = box.values.firstWhereOrNull(
+      (element) => element.id == id,
+    );
+
+    if (value != null && quantity == value.quantity) {
+      boolean = true;
     }
+
+    print(boolean);
     return boolean;
   }
 
@@ -74,6 +88,9 @@ class CartController extends GetxController {
     int index = 0;
     for (int i = 0; i < box.length; i++) {
       if (box.getAt(i)!.id.isCaseInsensitiveContains(id)) {
+        print(" contains: ${box.values.firstWhereOrNull(
+          (element) => element.id == id,
+        )}");
         boolean = true;
         index = i;
       }
@@ -87,6 +104,11 @@ class CartController extends GetxController {
 
   del(int index) {
     box.deleteAt(index);
+    update();
+  }
+
+  extend() {
+    isExtended.value = !isExtended.value;
     update();
   }
 }

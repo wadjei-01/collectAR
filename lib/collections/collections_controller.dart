@@ -5,9 +5,9 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:navbar/collections/collections_model.dart';
-import 'package:navbar/mainpages/cart_page/cartmodel.dart';
 import 'package:navbar/otherpages/globals.dart';
 
+import '../box/boxes.dart';
 import '../otherpages/productpage/product_model.dart';
 
 class CollectionsController extends GetxController {
@@ -55,6 +55,8 @@ class CollectionsController extends GetxController {
         box.getAt(index)!.addProduct(index, product);
       } else {
         Get.snackbar("Relax!", "This product has already been added",
+            animationDuration: Duration(milliseconds: 750),
+            duration: Duration(seconds: 2),
             backgroundColor: AppColors.primary);
       }
     }
@@ -82,13 +84,6 @@ class CollectionsController extends GetxController {
     Hive.box('collections').close();
     super.dispose();
   }
-}
-
-class Boxes {
-  static Box<Collections> getCollections() =>
-      Hive.box<Collections>('collections');
-  static Box<CartModel> getCart() => Hive.box<CartModel>('cart');
-  static Box<CartModel> getUser() => Hive.box<CartModel>('user');
 }
 
 class NewCollectionsController extends GetxController {

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:navbar/auth/authpage.dart';
 import 'package:navbar/auth/signup.dart';
 import 'package:navbar/otherpages/globals.dart';
@@ -66,8 +67,8 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(
                     height: 80,
                   ),
-                  Image.asset(
-                    'assets/images/logo.png',
+                  SvgPicture.asset(
+                    'assets/images/collectAR (logo).svg',
                     height: 70,
                   ),
                   const SizedBox(height: 20),

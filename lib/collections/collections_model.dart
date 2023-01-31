@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:navbar/otherpages/productpage/product_model.dart';
 import 'package:hive/hive.dart';
 
+import '../box/boxes.dart';
 import 'collections_controller.dart';
 part 'collections_model.g.dart';
 

@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:ar_flutter_plugin/datatypes/node_types.dart';
 import 'package:ar_flutter_plugin/managers/ar_anchor_manager.dart';
 import 'package:ar_flutter_plugin/managers/ar_location_manager.dart';
@@ -13,7 +12,6 @@ import 'package:navbar/otherpages/productpage/product_model.dart';
 import 'package:navbar/widgets.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'dart:math';
-//import 'package:flutter_unity_widget/flutter_unity_widget.dart';
 
 class ARSession extends StatefulWidget {
   ARSession({super.key, required this.product});
@@ -32,6 +30,13 @@ class _ARSessionState extends State<ARSession> {
 
 //String webObjectReference;
   ARNode? webObjectNode;
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,8 +84,7 @@ class _ARSessionState extends State<ARSession> {
     } else {
       var newNode = ARNode(
           type: NodeType.webGLB,
-          uri:
-              "https://github.com/KhronosGroup/glTF-Sample-Models/raw/master/2.0/Duck/glTF-Binary/Duck.glb",
+          uri: widget.product!.modelAR,
           position: position,
           scale: Vector3(0.2, 0.2, 0.2));
       bool? didAddWebNode = await arObjectManager.addNode(newNode);

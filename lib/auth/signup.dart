@@ -12,11 +12,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:navbar/auth/dropdown_plus_one.dart';
 import 'package:navbar/auth/rootpage.dart';
 import 'package:navbar/collections/collections_controller.dart';
-import 'package:navbar/mainpages/homepage/homepage.dart';
+import 'package:navbar/homepage/homepage.dart';
 import 'package:navbar/otherpages/globals.dart';
 
 import 'package:navbar/models/user_model.dart' as usermodel;
 
+import '../box/boxes.dart';
 import '../main.dart';
 
 class SignUp extends StatefulWidget {

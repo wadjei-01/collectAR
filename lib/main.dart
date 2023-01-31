@@ -1,24 +1,30 @@
+import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:navbar/collections/collections_model.dart';
-import 'package:navbar/mainpages/homepage/homepage.dart';
-import 'package:navbar/mainpages/cart_page/cartmodel.dart';
+import 'package:navbar/homepage/homepage.dart';
 import 'package:navbar/otherpages/globals.dart';
+import 'package:navbar/otherpages/productpage/product_bindings.dart';
+import 'package:navbar/otherpages/productpage/product_view.dart';
 import 'package:navbar/theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'auth/rootpage.dart';
 import 'package:navbar/mainpages/menu_page/menu_page.dart';
-import 'package:navbar/mainpages/cart_page/cart_page.dart';
 import 'package:navbar/mainpages/profile_page/profile_page.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:get/get.dart';
 import 'package:badges/badges.dart';
 
+import 'box/boxes.dart';
+import 'cart_page/cart_page.dart';
+import 'cart_page/cartcontroller.dart';
+import 'cart_page/cartmodel.dart';
 import 'collections/collections_controller.dart';
-import 'mainpages/cart_page/cartcontroller.dart';
 import 'models/user_model.dart';
+import 'orders/orders_view.dart';
 import 'otherpages/productpage/product_model.dart';
 
 late Box box;
@@ -67,8 +73,18 @@ class MyApp extends StatelessWidget {
             getPages: [
               GetPage(
                 name: '/',
-                page: () => RootPage(),
-              )
+                page: () => AnimatedSplashScreen(
+                    splash: SvgPicture.asset(
+                      'assets/images/collectAR (text).svg',
+                      width: 129.w,
+                      height: 339.h,
+                    ),
+                    nextScreen: RootPage()),
+              ),
+              GetPage(
+                  name: '/product',
+                  page: () => ProductScreen(),
+                  binding: ProductBindings())
             ],
           );
         });

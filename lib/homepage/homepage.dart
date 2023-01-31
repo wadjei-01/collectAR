@@ -8,16 +8,16 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
-import 'package:navbar/mainpages/homepage/homepage_controller.dart';
+import 'package:navbar/homepage/homepage_controller.dart';
 import 'package:navbar/otherpages/category_selection_page.dart';
 import 'package:navbar/otherpages/globals.dart';
 import 'package:navbar/otherpages/productpage/product_controller.dart';
 import 'package:navbar/otherpages/productpage/product_view.dart';
 import 'package:navbar/otherpages/search.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import '../../main.dart';
-import '../../otherpages/productpage/product_model.dart';
-import '../../widgets.dart';
+import '../main.dart';
+import '../otherpages/productpage/product_model.dart';
+import '../widgets.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -28,6 +28,7 @@ class HomePage extends StatelessWidget {
     ScrollController scrollController = ScrollController();
 
     return Scaffold(
+        backgroundColor: HexColor('#ffffff'),
         appBar: AppBar(
           title: const Text(
             '',
@@ -107,7 +108,7 @@ class HomePage extends StatelessWidget {
                                   itemBuilder: (_, index) {
                                     return AnimationConfiguration.staggeredGrid(
                                       position: index,
-                                      duration: Duration(milliseconds: 750),
+                                      duration: Duration(milliseconds: 500),
                                       columnCount: 2,
                                       child: SlideAnimation(
                                         child: FadeInAnimation(
@@ -116,8 +117,7 @@ class HomePage extends StatelessWidget {
                                                   controller.data[index],
                                               onPressed: () {
                                                 onCardPressed(
-                                                    controller.data[index],
-                                                    ProductController());
+                                                    controller.data[index]);
                                               }),
                                         ),
                                       ),
@@ -135,24 +135,29 @@ class HomePage extends StatelessWidget {
                             child: Column(
                               children: [
                                 SizedBox(
-                                  height: controller.allFetched ? 15.h : 30.h,
+                                  height: controller.allFetched.isTrue
+                                      ? 15.h
+                                      : 60.h,
                                   width: double.infinity,
                                 ),
-                                controller.isLoading
-                                    ? SizedBox(
-                                        height: 70.r,
-                                        width: 70.r,
-                                        child: CircularProgressIndicator(
-                                          color: AppColors.primary,
-                                        ),
+                                Obx(() {
+                                  return Column(
+                                    children: [
+                                      controller.isLoading.isTrue
+                                          ? LoadingIndicator()
+                                          : SizedBox(
+                                              height: 30.h,
+                                            ),
+                                      AnimatedContainer(
+                                        duration: Duration(milliseconds: 500),
+                                        height: controller.allFetched.isTrue
+                                            ? 15.h
+                                            : 30.h,
+                                        width: double.infinity,
                                       )
-                                    : SizedBox(
-                                        height: 30.h,
-                                      ),
-                                SizedBox(
-                                  height: controller.allFetched ? 15.h : 50.h,
-                                  width: double.infinity,
-                                )
+                                    ],
+                                  );
+                                })
                               ],
                             )),
                       ],

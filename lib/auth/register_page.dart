@@ -233,8 +233,8 @@ class _RegisterPageState extends State<RegisterPage> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 25, vertical: 10),
                     child: button(
-                        signUp(),
-                        const Text(
+                        onTap: signUp(),
+                        widget: const Text(
                           "Sign Up",
                           style: TextStyle(
                               color: Color.fromARGB(255, 20, 4, 82),

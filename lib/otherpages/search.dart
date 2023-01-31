@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:navbar/otherpages/productpage/product_controller.dart';
 import 'package:navbar/otherpages/productpage/product_model.dart';
@@ -58,52 +59,39 @@ class Search extends SearchDelegate {
                     height: 20,
                   ),
                   AnimationLimiter(
-                    child: GridView.count(
+                    child: GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 10,
-                      crossAxisSpacing: 10,
-                      children: [
-                        ...snapshot.data!.docs
-                            .where((QueryDocumentSnapshot<Object?> element) =>
-                                element['name']
-                                    .toString()
-                                    .toLowerCase()
-                                    .contains(query.toLowerCase()))
-                            .map((QueryDocumentSnapshot<Object?> data) {
-                          Product store = Product(
-                              id: data['id'],
-                              name: data['name'],
-                              description: data['description'],
-                              price: data['price'],
-                              stock: data['stock'],
-                              images: data['images'],
-                              bookmarked: data['bookmarked'],
-                              imageColour: data['imageColour'],
-                              primaryColour: data['primaryColour'],
-                              secondaryColour: data['secondaryColour'],
-                              tetiaryColour: data['tetiaryColour'],
-                              dateAdded: data['dateAdded'],
-                              category: data['category']);
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 30.h,
+                        childAspectRatio: 2.w / 2.2.h,
+                        crossAxisSpacing: 30.w,
+                      ),
+                      itemCount: snapshot.data!.docs.length,
+                      itemBuilder: (context, index) {
+                        QueryDocumentSnapshot queryDocumentSnapshot =
+                            snapshot.data!.docs[index];
+                        Product store = Product.fromJson(queryDocumentSnapshot
+                            .data() as Map<String, dynamic>);
 
-                          return TweenAnimationBuilder<double>(
-                              tween: Tween<double>(begin: 0.0, end: 1.0),
-                              curve: Curves.easeInOut,
-                              duration: const Duration(milliseconds: 1650),
-                              builder: ((context, double opacity, child) {
-                                return Opacity(
-                                    opacity: opacity,
-                                    child: SearchCard(
-                                        // ignore: unnecessary_null_comparison
-                                        storedProducts: store,
-                                        onPressed: () {
-                                          onCardPressed(
-                                              store, ProductController());
-                                        }));
-                              }));
-                        })
-                      ],
+                        return TweenAnimationBuilder<double>(
+                            tween: Tween<double>(begin: 0.0, end: 1.0),
+                            curve: Curves.easeInOut,
+                            duration: const Duration(milliseconds: 1650),
+                            builder: ((context, double opacity, child) {
+                              return Opacity(
+                                  opacity: opacity,
+                                  child: SearchCard(
+                                      // ignore: unnecessary_null_comparison
+                                      storedProducts: store,
+                                      onPressed: () {
+                                        onCardPressed(
+                                          store,
+                                        );
+                                      }));
+                            }));
+                      },
                     ),
                   ),
                 ],

@@ -4,50 +4,73 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_connect/sockets/src/socket_notifier.dart';
 import 'package:hive/hive.dart';
-import '../../mainpages/cart_page/cartcontroller.dart';
-import '../../mainpages/cart_page/cartmodel.dart';
+import '../../box/boxes.dart';
+import '../../cart_page/cartcontroller.dart';
+import '../../cart_page/cartmodel.dart';
+import '../../collections/collections_controller.dart';
+import 'package:collection/collection.dart';
 import 'product_model.dart';
 import '../globals.dart';
 import 'package:navbar/models/user_model.dart' as userModels;
 
 class ProductController extends GetxController
     with GetSingleTickerProviderStateMixin {
-  late final num;
-
-  void increment() => num.value++;
-  void decrement() {
-    if (num.value > 1) num.value--;
-  }
-
-  final CartController cartVM = Get.put(CartController());
-  bool addedToCart = false;
-  int? count;
-  late Product product;
+  final box = Boxes.getCart();
+  RxInt quantity = 1.obs;
+  RxBool isAdded = false.obs;
+  Product product = Get.arguments;
   var _relatedProducts;
 
   @override
   void onInit() {
-    product = Get.arguments as Product;
-    count = cartVM.findQuantity(product.id);
-    num = count?.obs ?? 1.obs;
     getData(product);
     super.onInit();
   }
 
+  void increment() {
+    quantity.value++;
+    checkProduct();
+    update();
+  }
+
+  void decrement() {
+    if (quantity.value > 1) quantity.value--;
+    checkProduct();
+    update();
+  }
+
+  checkProduct() {
+    if (cart.isAddedToCart(product.id, quantity.value)) {
+      isAdded.value = true;
+    } else {
+      isAdded.value = false;
+    }
+    update();
+  }
+
+  getQuantity(String id) {
+    CartModel? value =
+        box.values.firstWhereOrNull((element) => element.id == id);
+    if (value == null) {
+      quantity(1);
+    } else {
+      quantity(value.quantity);
+    }
+    update();
+  }
+
+  final cart = Get.find<CartController>();
+
   get relatedProducts => _relatedProducts.value;
 
   getData(Product product) {
+    getQuantity(product.id);
+    checkProduct();
     _relatedProducts = FirebaseFirestore.instance
         .collection('store')
         .where("category", isEqualTo: product.category)
         .where('id', isNotEqualTo: product.id)
         .obs;
     update();
-  }
-
-  @override
-  void refresh() {
-    product = Get.arguments as Product;
-    super.refresh();
   }
 }
