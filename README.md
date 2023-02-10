@@ -1,4 +1,4 @@
-# navbar
+# collectAR
 
 A new Flutter project.
 
