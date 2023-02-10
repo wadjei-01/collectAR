@@ -7,10 +7,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:navbar/order_history/order_history_controller.dart';
 import 'package:navbar/otherpages/globals.dart';
 import 'package:navbar/payment/payment_view.dart';
 import 'package:navbar/theme/fonts.dart';
 import 'package:navbar/widgets.dart';
+import '../order_history/order_history_view.dart';
 import 'cartcontroller.dart';
 import 'cartmodel.dart';
 import '../../otherpages/productpage/product_view.dart';
@@ -24,16 +26,33 @@ class CartPage extends StatefulWidget {
 
 class _CartPageState extends State<CartPage> {
   final CartController cartVM = Get.put(CartController());
+  final orderHistoryController = Get.find<OrderHistoryController>();
+
   @override
   Widget build(BuildContext context) {
+    orderHistoryController.checkOrderHistory();
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Cart',
-          style: TextStyle(color: Colors.black, fontFamily: 'Gotham Black'),
-        ),
+        title: Text('Cart',
+            style: BoldHeaderstextStyle(
+                fontSize: 55.sp, color: AppColors.secondary)),
         elevation: 0,
         backgroundColor: Colors.white,
+        actions: [
+          IconButton(
+            onPressed: () {
+              Get.to(() => OrderHistory());
+            },
+            icon: Badge(
+                largeSize: 30.r,
+                smallSize: 25.r,
+                backgroundColor: AppColors.primary,
+                alignment: AlignmentDirectional.topStart,
+                child: Icon(Ionicons.newspaper),
+                isLabelVisible: orderHistoryController.hasData.value),
+            color: AppColors.secondary,
+          )
+        ],
       ),
       body: SafeArea(
         child: Stack(children: [
@@ -127,15 +146,18 @@ class _CartPageState extends State<CartPage> {
                                                             .color))),
                                               ),
                                             ),
-                                            Text(
-                                              '${value.box.getAt(index)!.id}',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 14,
-                                                  fontFamily:
-                                                      'Montserrat-Medium',
-                                                  color: Color.fromARGB(
-                                                      103, 0, 0, 0)),
+                                            SizedBox(
+                                              width: 350.w,
+                                              child: Text(
+                                                '${value.box.getAt(index)!.id}',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 14,
+                                                    fontFamily:
+                                                        'Montserrat-Medium',
+                                                    color: Color.fromARGB(
+                                                        103, 0, 0, 0)),
+                                              ),
                                             ),
                                             SizedBox(
                                               height: 40.h,
@@ -315,8 +337,24 @@ class _CartPageState extends State<CartPage> {
                         }),
                   );
                 }
-                return const Center(
-                  child: Text("Cart Empty"),
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset(
+                        'assets/images/empty.svg',
+                        fit: BoxFit.fitWidth,
+                        width: 500.w,
+                      ),
+                      SizedBox(
+                        height: 20.h,
+                      ),
+                      Text(
+                        "Cart Empty",
+                        style: BoldHeaderstextStyle(fontSize: 50.sp),
+                      )
+                    ],
+                  ),
                 );
               }),
           Align(
@@ -426,7 +464,7 @@ class _CartPageState extends State<CartPage> {
                                                           fontSize: 50.sp),
                                                     ),
                                                     Text(
-                                                      "₵2",
+                                                      "₵${(cartVM.totalCost() * 0.01).toStringAsFixed(2)}",
                                                       style: BoldHeaderstextStyle(
                                                           color:
                                                               AppColors.lighten(
@@ -472,7 +510,7 @@ class _CartPageState extends State<CartPage> {
                                       height: 40.h,
                                     ),
                                     Text(
-                                      "₵${(controller.totalCost() + 2).toStringAsFixed(2)}",
+                                      "₵${(controller.totalCost() + (controller.totalCost() * 0.01)).toStringAsFixed(2)}",
                                       style: MediumHeaderStyle(
                                           color: AppColors.lighten(
                                               AppColors.primary, 0.1),

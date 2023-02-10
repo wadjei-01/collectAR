@@ -4,8 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppColors {
+  //#F9BA20
   static Color primary = Color.fromARGB(255, 249, 186, 32);
+  // #333436
   static Color secondary = const Color.fromARGB(255, 51, 52, 54);
+  static Color background = const Color.fromARGB(255, 236, 237, 239);
   static var title = Colors.grey[600];
 
   static Color darken(Color color, [double amount = .1]) {

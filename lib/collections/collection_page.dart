@@ -10,15 +10,17 @@ class CollectionsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ScrollController scrollController = ScrollController();
-    final collection = Get.arguments as Collections;
+    Collections? collection = Get.arguments as Collections;
 
     return Scaffold(
       appBar: CustomAppBar(
-          scrollController: scrollController,
-          startAppBarColor: Color(collection.color),
-          targetAppBarColor: Colors.white,
-          startIconColor: Colors.white,
-          targetIconColor: Colors.black),
+        scrollController: scrollController,
+        startAppBarColor: Color(collection.color),
+        targetAppBarColor: Colors.white,
+        startIconColor: Colors.white,
+        targetIconColor: Colors.black,
+        sideButtonExists: true,
+      ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 30.w),
         child: Column(

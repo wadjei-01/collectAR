@@ -26,14 +26,13 @@ class ProductAdapter extends TypeAdapter<Product> {
       price: fields[6] as double,
       stock: fields[7] as int,
       images: (fields[8] as List).cast<dynamic>(),
-      bookmarked: fields[9] as bool,
-      imageColour: fields[10] as dynamic,
-      primaryColour: fields[11] as String,
-      secondaryColour: fields[12] as String,
-      tetiaryColour: fields[13] as String,
-      dateAdded: fields[14] as dynamic,
-      category: fields[15] as String,
-      modelAR: fields[16] as String,
+      imageColour: fields[9] as dynamic,
+      primaryColour: fields[10] as String,
+      secondaryColour: fields[11] as String,
+      tetiaryColour: fields[12] as String,
+      dateAdded: fields[13] as dynamic,
+      category: (fields[14] as List).cast<int>(),
+      modelAR: fields[15] as String,
     );
   }
 
@@ -60,20 +59,18 @@ class ProductAdapter extends TypeAdapter<Product> {
       ..writeByte(8)
       ..write(obj.images)
       ..writeByte(9)
-      ..write(obj.bookmarked)
-      ..writeByte(10)
       ..write(obj.imageColour)
-      ..writeByte(11)
+      ..writeByte(10)
       ..write(obj.primaryColour)
-      ..writeByte(12)
+      ..writeByte(11)
       ..write(obj.secondaryColour)
-      ..writeByte(13)
+      ..writeByte(12)
       ..write(obj.tetiaryColour)
-      ..writeByte(14)
+      ..writeByte(13)
       ..write(obj.dateAdded)
-      ..writeByte(15)
+      ..writeByte(14)
       ..write(obj.category)
-      ..writeByte(16)
+      ..writeByte(15)
       ..write(obj.modelAR);
   }
 

@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,21 @@ import '../otherpages/productpage/product_view.dart';
 
 class HomePageController extends GetxController {
   List<String> tabs = ['All', 'Popular', 'Top Rated', 'Latest'];
+
+  RxInt activeCarourselIndex = 0.obs;
+
+  final imageList = [
+    "assets/images/categories/Accent.png",
+    "assets/images/categories/Bedroom.png",
+    "assets/images/categories/Desks.png",
+    "assets/images/categories/Home Office.png",
+    "assets/images/categories/Kids.png",
+    "assets/images/categories/Outdoor.png",
+    "assets/images/categories/Seating.png",
+    "assets/images/categories/Wardrobes.png",
+    "assets/images/categories/Tables.png",
+  ];
+
   late String tabSelection;
   int selected = 0;
   @override
@@ -32,6 +48,8 @@ class HomePageController extends GetxController {
   DocumentSnapshot? _lastDocument;
   late Query query;
 
+  final carouselController = CarouselController();
+
   reset() async {
     data.clear();
 
@@ -46,7 +64,7 @@ class HomePageController extends GetxController {
       query = FirebaseFirestore.instance.collection("store");
       update();
     }
-
+    carouselController.animateToPage(0);
     allFetched(false);
     isLoading(false);
     _lastDocument = null;

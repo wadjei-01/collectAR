@@ -1,11 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:navbar/categories/categories_model.dart';
 import 'package:navbar/collections/collections_view.dart';
 import 'package:navbar/main.dart';
 import 'package:navbar/otherpages/productpage/product_model.dart';
@@ -19,7 +21,6 @@ import '../../homepage/homepage.dart';
 
 class ProductScreen extends StatelessWidget {
   ProductScreen({super.key});
-  // final Product product;
 
   final controller = Get.find<ProductController>();
 
@@ -42,7 +43,7 @@ class ProductScreen extends StatelessWidget {
                 fit: BoxFit.fitWidth,
               ),
             ));
-
+    Categories category = Categories();
     return Scaffold(
         extendBodyBehindAppBar: true,
         appBar: CustomAppBar(
@@ -52,6 +53,7 @@ class ProductScreen extends StatelessWidget {
           startIconColor: bgColor,
           scrollController: sController,
           product: controller.product,
+          sideButtonExists: true,
         ),
         body: SingleChildScrollView(
           controller: sController,
@@ -102,7 +104,7 @@ class ProductScreen extends StatelessWidget {
                             GestureDetector(
                               onTap: () =>
                                   // collectionsController.openDialog(context, store)
-                                  Get.to(CollectionsView(),
+                                  Get.to(() => CollectionsView(),
                                       arguments: controller.product),
                               child: Container(
                                 width: 120.r,
@@ -127,7 +129,7 @@ class ProductScreen extends StatelessWidget {
                           height: 10.h,
                         ),
                         Text(
-                          controller.product.category,
+                          category.getCatName(controller.product.category[0])!,
                           style: TextStyle(
                               color: AppColors.title,
                               fontFamily: 'Monserrat-Medium',

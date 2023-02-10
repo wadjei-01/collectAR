@@ -17,26 +17,24 @@ class Product {
   @HiveField(5)
   final String colorText;
   @HiveField(6)
-  final double price;
+  final dynamic price;
   @HiveField(7)
   final int stock;
   @HiveField(8)
   final List<dynamic> images;
   @HiveField(9)
-  bool bookmarked;
-  @HiveField(10)
   final dynamic imageColour;
-  @HiveField(11)
+  @HiveField(10)
   final String primaryColour;
-  @HiveField(12)
+  @HiveField(11)
   final String secondaryColour;
-  @HiveField(13)
+  @HiveField(12)
   final String tetiaryColour;
-  @HiveField(14)
+  @HiveField(13)
   final dynamic dateAdded;
+  @HiveField(14)
+  final List<dynamic> category;
   @HiveField(15)
-  final String category;
-  @HiveField(16)
   final String modelAR;
 
   Product(
@@ -49,7 +47,6 @@ class Product {
       required this.price,
       required this.stock,
       required this.images,
-      required this.bookmarked,
       required this.imageColour,
       required this.primaryColour,
       required this.secondaryColour,
@@ -67,7 +64,6 @@ class Product {
         'details': details,
         'materials': materials,
         'images': images,
-        'bookmarked': bookmarked,
         'imageColour': imageColour,
         'primaryColour': primaryColour,
         'secondaryColour': secondaryColour,
@@ -87,7 +83,6 @@ class Product {
       price: json['price'],
       stock: json['stock'],
       images: json['images'],
-      bookmarked: json['bookmarked'],
       imageColour: json['imageColour'],
       primaryColour: json['primaryColour'],
       secondaryColour: json['secondaryColour'],

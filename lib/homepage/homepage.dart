@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,12 +9,14 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:navbar/categories/categoriesview.dart';
 import 'package:navbar/homepage/homepage_controller.dart';
 import 'package:navbar/otherpages/category_selection_page.dart';
 import 'package:navbar/otherpages/globals.dart';
 import 'package:navbar/otherpages/productpage/product_controller.dart';
 import 'package:navbar/otherpages/productpage/product_view.dart';
 import 'package:navbar/otherpages/search.dart';
+import 'package:navbar/theme/fonts.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../main.dart';
 import '../otherpages/productpage/product_model.dart';
@@ -28,11 +31,12 @@ class HomePage extends StatelessWidget {
     ScrollController scrollController = ScrollController();
 
     return Scaffold(
-        backgroundColor: HexColor('#ffffff'),
+        backgroundColor: Colors.white,
         appBar: AppBar(
-          title: const Text(
-            '',
-            style: TextStyle(color: Colors.black, fontFamily: 'Gotham Black'),
+          title: Text(
+            'Home',
+            style: BoldHeaderstextStyle(
+                fontSize: 55.sp, color: AppColors.secondary),
           ),
           actions: [
             Padding(
@@ -68,7 +72,7 @@ class HomePage extends StatelessWidget {
                     SizedBox(
                       height: 40.h,
                     ),
-                    Categories(),
+                    CategoriesCarousel(),
                     SizedBox(
                       height: 40.h,
                     ),
@@ -171,63 +175,64 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class Categories extends StatelessWidget {
-  const Categories({super.key});
+class CategoriesCarousel extends StatelessWidget {
+  const CategoriesCarousel({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // final controller = Get.find<HomePageController>();
+    final controller = Get.find<HomePageController>();
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Padding(
-              padding: EdgeInsets.only(left: 45.w),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text(
-                    'Our',
-                    style: TextStyle(fontSize: 30),
-                  ),
-                  Text('Products',
-                      style:
-                          TextStyle(fontSize: 30, fontFamily: 'Gotham Black'))
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(right: 45.w),
-              child: GestureDetector(
+        CarouselSlider.builder(
+            carouselController: controller.carouselController,
+            itemCount: controller.imageList.length,
+            itemBuilder: (context, index, realIndex) {
+              final image = controller.imageList[index];
+              return GestureDetector(
+                onTap: () => Get.toNamed('/categories', arguments: index + 1),
                 child: Container(
-                  height: 100.h,
-                  width: 275.w,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(50.r),
-                    border: Border.all(color: Colors.black, width: 3.r),
-                    color: Colors.white,
-                  ),
-                  child: Center(
-                    child: Text('Categories',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontFamily: 'Gotham Black',
-                            fontSize: 30.sp)),
+                  margin: EdgeInsets.symmetric(horizontal: 10.w),
+                  child: Image.asset(
+                    image,
+                    fit: BoxFit.fitWidth,
+                    width: 0.95.sw,
                   ),
                 ),
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => CategorySelectionPage()));
-                },
-              ),
+              );
+            },
+            options: CarouselOptions(
+              viewportFraction: 0.95,
+              height: 400.h,
+              autoPlay: true,
+              enableInfiniteScroll: false,
+              enlargeCenterPage: true,
+              onPageChanged: (index, reason) {
+                controller.activeCarourselIndex(index);
+              },
+            )),
+        SizedBox(
+          height: 10.h,
+          width: 1.sw,
+          child: Center(
+            child: ListView.builder(
+              shrinkWrap: true,
+              scrollDirection: Axis.horizontal,
+              itemCount: controller.imageList.length,
+              itemBuilder: (context, index) => Obx(() => AnimatedContainer(
+                  margin: EdgeInsets.symmetric(horizontal: 5.w),
+                  width: controller.activeCarourselIndex == index ? 50.w : 30.w,
+                  decoration: BoxDecoration(
+                      color: controller.activeCarourselIndex == index
+                          ? AppColors.primary
+                          : AppColors.secondary,
+                      borderRadius: BorderRadius.circular(10.r)),
+                  duration: Duration(milliseconds: 500))),
             ),
-          ],
+          ),
         ),
-        SizedBox(height: 90.h),
+        SizedBox(height: 70.h),
         SizedBox(
           height: 120.h,
           width: double.infinity,

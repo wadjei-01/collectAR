@@ -2,13 +2,16 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:navbar/collections/collection_page.dart';
 import 'package:navbar/collections/collections_controller.dart';
 import 'package:navbar/collections/collections_model.dart';
 import 'package:navbar/otherpages/globals.dart';
 import 'package:navbar/otherpages/productpage/product_model.dart';
+import 'package:navbar/theme/fonts.dart';
 
 import '../box/boxes.dart';
 import '../widgets.dart';
@@ -23,10 +26,12 @@ class CollectionsView extends GetView<CollectionsController> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          controller.product == null ? "Collections" : "Add to Collection",
-          style: TextStyle(
-              color: Colors.black, fontFamily: 'Gotham Black', fontSize: 40.sp),
-        ),
+            controller.product == null ? "Collections" : "Add to Collection",
+            style: BoldHeaderstextStyle(
+                fontSize: 55.sp, color: AppColors.secondary)
+            // TextStyle(
+            //     color: Colors.black, fontFamily: 'Gotham Black', fontSize: 40.sp),
+            ),
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 20.w),
@@ -54,7 +59,26 @@ class CollectionsView extends GetView<CollectionsController> {
                   builder: (context, box, _) {
                     return AnimationLimiter(
                         child: (box.length == 0
-                            ? Center(child: Text("Nothing to Show"))
+                            ? Center(
+                                heightFactor: 4,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SvgPicture.asset(
+                                      'assets/images/emptyCollection.svg',
+                                      fit: BoxFit.fitWidth,
+                                      width: 500.w,
+                                    ),
+                                    SizedBox(
+                                      height: 20.h,
+                                    ),
+                                    Text(
+                                      "Nothing... Yet",
+                                      style:
+                                          BoldHeaderstextStyle(fontSize: 50.sp),
+                                    ),
+                                  ],
+                                ))
                             : GridView.builder(
                                 physics: ClampingScrollPhysics(),
                                 shrinkWrap: true,
@@ -80,8 +104,8 @@ class CollectionsView extends GetView<CollectionsController> {
                                                   .addToCollection(index,
                                                       controller.product!);
                                             } else {
-                                              Get.to(CollectionsPage(),
-                                                  arguments: box.get(index));
+                                              Get.to(() => CollectionsPage(),
+                                                  arguments: box.getAt(index));
                                             }
                                           },
                                           onLongPress: () {
@@ -180,6 +204,13 @@ class CollectionsView extends GetView<CollectionsController> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        elevation: 0,
+        child: Center(
+            child: Icon(
+          Ionicons.add_circle_sharp,
+          color: AppColors.secondary,
+          size: 100.r,
+        )),
         onPressed: () => modalBottomsheet(
                 newCollectionsController, collectionsController, context)
             .whenComplete(() => newCollectionsController.reset()),

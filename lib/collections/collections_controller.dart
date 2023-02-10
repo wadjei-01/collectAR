@@ -32,6 +32,7 @@ class CollectionsController extends GetxController {
   @override
   void onInit() {
     product = Get.arguments as Product?;
+
     super.onInit();
   }
 

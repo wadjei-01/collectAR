@@ -1,10 +1,15 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
+import 'package:badges/badges.dart' as badge;
+// import 'package:badges/badges.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:navbar/categories/categoriesview.dart';
+import 'package:navbar/collections/collection_page.dart';
 import 'package:navbar/collections/collections_model.dart';
+import 'package:navbar/collections/collections_view.dart';
 import 'package:navbar/homepage/homepage.dart';
 import 'package:navbar/otherpages/globals.dart';
 import 'package:navbar/otherpages/productpage/product_bindings.dart';
@@ -16,14 +21,16 @@ import 'package:navbar/mainpages/menu_page/menu_page.dart';
 import 'package:navbar/mainpages/profile_page/profile_page.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:get/get.dart';
-import 'package:badges/badges.dart';
+// import 'package:badges/src/badge.dart';
 
 import 'box/boxes.dart';
 import 'cart_page/cart_page.dart';
 import 'cart_page/cartcontroller.dart';
 import 'cart_page/cartmodel.dart';
+import 'categories/categories_binding.dart';
 import 'collections/collections_controller.dart';
 import 'models/user_model.dart';
+import 'order_history/order_history_controller.dart';
 import 'orders/orders_view.dart';
 import 'otherpages/productpage/product_model.dart';
 
@@ -84,7 +91,11 @@ class MyApp extends StatelessWidget {
               GetPage(
                   name: '/product',
                   page: () => ProductScreen(),
-                  binding: ProductBindings())
+                  binding: ProductBindings()),
+              GetPage(
+                  name: '/categories',
+                  page: () => CategoriesView(),
+                  binding: CategoriesBindings()),
             ],
           );
         });
@@ -100,13 +111,16 @@ class NavBar extends StatefulWidget {
 
 class _NavBarState extends State<NavBar> {
   int currentPage = 0;
+  late int prevPage;
   final pages = [
     const HomePage(),
-    const MenuPage(),
+    CollectionsView(),
     const CartPage(),
     const ProfilePage()
   ];
   final CartController cartVM = Get.put(CartController());
+  final OrderHistoryController orderHistoryController =
+      Get.put(OrderHistoryController());
 
   @override
   Widget build(BuildContext context) {
@@ -130,6 +144,11 @@ class _NavBarState extends State<NavBar> {
                     selectedIndex: currentPage,
                     onTabChange: (index) {
                       setState(() {
+                        prevPage = currentPage;
+                        if (prevPage == 1) {
+                          Get.delete<CollectionsController>();
+                          Get.delete<NewCollectionsController>();
+                        }
                         currentPage = index;
                       });
                     },
@@ -147,11 +166,11 @@ class _NavBarState extends State<NavBar> {
                         icon: Icons.shopping_basket_outlined,
                         leading: currentPage == 2 || number.isEmpty
                             ? null
-                            : Badge(
+                            : badge.Badge(
                                 badgeColor: AppColors.primary,
                                 elevation: 0,
-                                position:
-                                    BadgePosition.topEnd(top: -12, end: -12),
+                                position: badge.BadgePosition.topEnd(
+                                    top: -12, end: -12),
                                 badgeContent: Text(
                                   number.length.toString(),
                                   style: TextStyle(

@@ -8,7 +8,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:navbar/otherpages/arsession.dart';
 import 'package:navbar/otherpages/productpage/product_model.dart';
+import 'package:navbar/theme/fonts.dart';
 
+import 'cart_page/cartcontroller.dart';
+import 'orders/orders_model.dart';
 import 'otherpages/globals.dart';
 import 'otherpages/productpage/product_controller.dart';
 import 'otherpages/productpage/product_view.dart';
@@ -99,6 +102,7 @@ class CustomAppBar extends StatefulWidget with PreferredSizeWidget {
     required this.targetAppBarColor,
     required this.startIconColor,
     required this.targetIconColor,
+    required this.sideButtonExists,
     this.backArrow,
     this.sideButton,
     this.sideBtnBoolean,
@@ -120,6 +124,7 @@ class CustomAppBar extends StatefulWidget with PreferredSizeWidget {
   IconData? backArrow;
   IconData? sideButton;
   bool? sideBtnBoolean;
+  bool sideButtonExists = false;
   Function(bool)? boolValueCallback;
   Color? sideBtnNewColor;
   Product? product;
@@ -189,24 +194,26 @@ class _CustomAppBarState extends State<CustomAppBar> {
               ),
             ),
           ),
-          InkWell(
-            onTap: () {
-              Get.to(ARSession(product: widget.product));
-            },
-            child: Container(
-              width: 150.r,
-              height: 150.r,
-              decoration:
-                  BoxDecoration(borderRadius: BorderRadius.circular(45.r)),
-              child: Center(
-                child: SvgPicture.asset(
-                  'assets/images/icons/ar_cube.svg',
-                  width: 90.r,
-                  color: iconColor,
-                ),
-              ),
-            ),
-          ),
+          widget.sideButtonExists == true
+              ? InkWell(
+                  onTap: () {
+                    Get.to(ARSession(product: widget.product));
+                  },
+                  child: Container(
+                    width: 150.r,
+                    height: 150.r,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(45.r)),
+                    child: Center(
+                      child: SvgPicture.asset(
+                        'assets/images/icons/ar_cube.svg',
+                        width: 90.r,
+                        color: iconColor,
+                      ),
+                    ),
+                  ),
+                )
+              : SizedBox(),
         ]),
       ),
       titleSpacing: 0,
@@ -545,5 +552,155 @@ class ListOfItems extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+Widget getContainer(List<Widget> children) {
+  return IntrinsicHeight(
+    child: Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+          color: Colors.white, borderRadius: BorderRadius.circular(30.r)),
+      child: Padding(
+        padding: EdgeInsets.all(40.r),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: children,
+        ),
+      ),
+    ),
+  );
+}
+
+Container orderContainer(int index,
+    {CartController? cartController, Orders? order}) {
+  return Container(
+    height: 200.h,
+    width: double.infinity,
+    decoration: BoxDecoration(
+        color: Colors.white, borderRadius: BorderRadius.circular(30.r)),
+    child: Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  clipBehavior: Clip.antiAlias,
+                  height: 140.r,
+                  width: 140.r,
+                  decoration: BoxDecoration(
+                      color: Color(
+                        order?.items[index].color ??
+                            cartController!.box.getAt(index)!.color,
+                      ),
+                      borderRadius: BorderRadius.circular(70.r)),
+                  child: CachedNetworkImage(
+                      imageUrl: order?.items[index].image ??
+                          cartController!.box.getAt(index)!.image),
+                ),
+                SizedBox(
+                  width: 30.w,
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                        width: 500.w,
+                        child: Text(
+                          order?.items[index].name ??
+                              cartController!.box.getAt(index)!.name,
+                          style: MediumHeaderStyle(
+                              color: Color(order?.items[index].color ??
+                                  cartController!.box.getAt(index)!.color),
+                              fontSize: 40.sp,
+                              overFlow: TextOverflow.ellipsis),
+                        )),
+                    SizedBox(
+                        width: 500.w,
+                        child: Text(
+                          order?.items[index].id ??
+                              cartController!.box.getAt(index)!.id,
+                          style: RegularHeaderStyle(
+                            fontSize: 35.sp,
+                          ),
+                        )),
+                  ],
+                ),
+              ],
+            ),
+            Text(
+              '₵ ${order?.items[index].price.toStringAsFixed(2) ?? cartController!.box.getAt(index)!.price.toStringAsFixed(2)}',
+              style: RegularHeaderStyle(),
+            )
+          ],
+        ),
+        index != ((order?.items.length ?? cartController!.box.length) - 1)
+            ? getDivider()
+            : SizedBox(
+                height: 0.h,
+              )
+      ],
+    ),
+  );
+}
+
+Divider getDivider() {
+  return Divider(
+    color: AppColors.lighten(AppColors.title!, 0.4),
+  );
+}
+
+String showTitleUpdate(String name) {
+  if (name.contains('pending')) {
+    return 'Pending';
+  } else if (name.contains('accepted')) {
+    return 'Accepted';
+  } else if (name.contains('onRoute')) {
+    return 'On Route!';
+  } else if (name.contains('delivered')) {
+    return 'Delivered';
+  } else {
+    return 'Declined';
+  }
+}
+
+Color showColorUpdate(String name) {
+  if (name.contains('pending')) {
+    return Colors.orange;
+  } else if (name.contains('accepted')) {
+    return Color.fromARGB(255, 183, 255, 17);
+  } else if (name.contains('onRoute')) {
+    return Color.fromARGB(255, 183, 255, 17);
+  } else if (name.contains('delivered')) {
+    return Colors.green;
+  } else {
+    return Colors.red;
+  }
+}
+
+String showSubtitleUpdate(String name) {
+  if (name.contains('pending')) {
+    return 'Your order is being processed';
+  } else if (name.contains('accepted')) {
+    return 'Your order has been accepted...';
+  } else if (name.contains('onRoute')) {
+    return 'Your order would be coming soon!!';
+  } else if (name.contains('delivered')) {
+    return 'Your order has been deliver';
+  } else {
+    return 'Sorry about that';
+  }
+}
+
+Color? showUpdate(List<Status> stats, String name, int index) {
+  if (name == "declined") {
+    return Colors.red;
+  } else if (stats.indexOf(Status.fromJson(name)) >= index) {
+    return AppColors.primary;
+  } else {
+    return AppColors.title;
   }
 }

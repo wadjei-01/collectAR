@@ -34,7 +34,7 @@ class _ARSessionState extends State<ARSession> {
   @override
   void dispose() {
     // TODO: implement dispose
-
+    arSessionManager.dispose();
     super.dispose();
   }
 

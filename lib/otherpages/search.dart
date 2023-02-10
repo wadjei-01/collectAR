@@ -58,40 +58,42 @@ class Search extends SearchDelegate {
                   const SizedBox(
                     height: 20,
                   ),
-                  AnimationLimiter(
-                    child: GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        mainAxisSpacing: 30.h,
-                        childAspectRatio: 2.w / 2.2.h,
-                        crossAxisSpacing: 30.w,
-                      ),
-                      itemCount: snapshot.data!.docs.length,
-                      itemBuilder: (context, index) {
-                        QueryDocumentSnapshot queryDocumentSnapshot =
-                            snapshot.data!.docs[index];
-                        Product store = Product.fromJson(queryDocumentSnapshot
-                            .data() as Map<String, dynamic>);
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 30.w),
+                    child: AnimationLimiter(
+                      child: GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 30.h,
+                          childAspectRatio: 2.w / 2.2.h,
+                          crossAxisSpacing: 30.w,
+                        ),
+                        itemCount: snapshot.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          QueryDocumentSnapshot queryDocumentSnapshot =
+                              snapshot.data!.docs[index];
+                          Product store = Product.fromJson(queryDocumentSnapshot
+                              .data() as Map<String, dynamic>);
 
-                        return TweenAnimationBuilder<double>(
-                            tween: Tween<double>(begin: 0.0, end: 1.0),
-                            curve: Curves.easeInOut,
-                            duration: const Duration(milliseconds: 1650),
-                            builder: ((context, double opacity, child) {
-                              return Opacity(
-                                  opacity: opacity,
-                                  child: SearchCard(
-                                      // ignore: unnecessary_null_comparison
-                                      storedProducts: store,
-                                      onPressed: () {
-                                        onCardPressed(
-                                          store,
-                                        );
-                                      }));
-                            }));
-                      },
+                          return TweenAnimationBuilder<double>(
+                              tween: Tween<double>(begin: 0.0, end: 1.0),
+                              curve: Curves.easeInOut,
+                              duration: const Duration(milliseconds: 1650),
+                              builder: ((context, double opacity, child) {
+                                return Opacity(
+                                    opacity: opacity,
+                                    child: ProductCard(
+                                        storedProducts: store,
+                                        onPressed: () {
+                                          onCardPressed(
+                                            store,
+                                          );
+                                        }));
+                              }));
+                        },
+                      ),
                     ),
                   ),
                 ],
@@ -124,84 +126,5 @@ class Search extends SearchDelegate {
             },
           );
         });
-  }
-}
-
-class SearchCard extends StatelessWidget {
-  SearchCard({Key? key, required this.storedProducts, required this.onPressed})
-      : super(key: key);
-
-  var storedProducts;
-  final void Function() onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    Color color = Colors.white;
-    Color textColor =
-        color.computeLuminance() < 0.6 ? Colors.black : Colors.white;
-
-    return GestureDetector(
-      onTap: onPressed,
-      child: Container(
-        width: 200,
-        height: 200,
-        margin: EdgeInsets.symmetric(horizontal: 5),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
-          color: HexColor(storedProducts.imageColour),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(
-              height: 20,
-            ),
-            TweenAnimationBuilder<double>(
-                tween: Tween<double>(begin: 0.0, end: 1.0),
-                curve: Curves.easeInOut,
-                duration: const Duration(seconds: 1),
-                builder: ((context, double opacity, child) {
-                  return Opacity(
-                    opacity: opacity,
-                    child: Center(
-                      child: CachedNetworkImage(
-                        imageUrl: storedProducts.images[0],
-                        height: 80,
-                      ),
-                    ),
-                  );
-                })),
-            const SizedBox(
-              height: 25,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    storedProducts.id,
-                    style: TextStyle(
-                        fontFamily: 'Gotham Book',
-                        fontSize: 12,
-                        color: textColor),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    '${storedProducts.price}',
-                    style: TextStyle(
-                        fontFamily: 'Montserrat Black',
-                        fontSize: 13,
-                        color: textColor),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
