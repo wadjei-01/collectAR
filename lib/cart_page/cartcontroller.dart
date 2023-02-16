@@ -10,6 +10,8 @@ import 'cartmodel.dart';
 
 class CartController extends GetxController {
   final box = Boxes.getCart();
+  double deliveryFee = 15.0;
+  double rate = 0.01;
   void incrementQuantity(int quantity) => quantity++;
   void decrementQuantity(int quantity) {
     if (quantity > 1) quantity--;
@@ -54,6 +56,12 @@ class CartController extends GetxController {
       sum = sum + (box.getAt(i)!.price * box.getAt(i)!.quantity);
     }
     return sum;
+  }
+
+  overallCost() {
+    double total = totalCost();
+    double overAll = total + (total * rate) + deliveryFee;
+    return overAll;
   }
 
   findQuantity(String id) {

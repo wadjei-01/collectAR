@@ -1,6 +1,5 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:badges/badges.dart' as badge;
-// import 'package:badges/badges.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,6 +10,7 @@ import 'package:navbar/collections/collection_page.dart';
 import 'package:navbar/collections/collections_model.dart';
 import 'package:navbar/collections/collections_view.dart';
 import 'package:navbar/homepage/homepage.dart';
+import 'package:navbar/otherpages/arsession/arsession.dart';
 import 'package:navbar/otherpages/globals.dart';
 import 'package:navbar/otherpages/productpage/product_bindings.dart';
 import 'package:navbar/otherpages/productpage/product_view.dart';
@@ -22,6 +22,7 @@ import 'package:navbar/mainpages/profile_page/profile_page.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:get/get.dart';
 // import 'package:badges/src/badge.dart';
+import 'package:flutter/services.dart';
 
 import 'box/boxes.dart';
 import 'cart_page/cart_page.dart';
@@ -32,6 +33,7 @@ import 'collections/collections_controller.dart';
 import 'models/user_model.dart';
 import 'order_history/order_history_controller.dart';
 import 'orders/orders_view.dart';
+import 'otherpages/arsession/arsessionbinding.dart';
 import 'otherpages/productpage/product_model.dart';
 
 late Box box;
@@ -55,6 +57,11 @@ void main() async {
     statusBarIconBrightness: Brightness.dark,
     //set brightness for icons, like dark background light icons
   )); // transparent status bar
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]).then((value) => runApp(const MyApp()));
+
   runApp(const MyApp());
 }
 
@@ -96,6 +103,10 @@ class MyApp extends StatelessWidget {
                   name: '/categories',
                   page: () => CategoriesView(),
                   binding: CategoriesBindings()),
+              GetPage(
+                  name: '/ar',
+                  page: () => ARSessionView(),
+                  binding: ARSessionBindings()),
             ],
           );
         });

@@ -6,7 +6,8 @@ class OrderHistoryController extends GetxController {
   static final userID = FireStoreDB.auth.currentUser!.uid;
   final firestoreDB = FireStoreDB.firebaseFirestore
       .collection('orders')
-      .where("userID", isEqualTo: userID);
+      .where("userID", isEqualTo: userID)
+      .orderBy("date", descending: true);
 
   RxBool hasData = false.obs;
 
@@ -17,10 +18,5 @@ class OrderHistoryController extends GetxController {
     } else {
       hasData(false);
     }
-  }
-
-  @override
-  void onInit() {
-    super.onInit();
   }
 }

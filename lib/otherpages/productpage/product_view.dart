@@ -11,7 +11,7 @@ import 'package:navbar/categories/categories_model.dart';
 import 'package:navbar/collections/collections_view.dart';
 import 'package:navbar/main.dart';
 import 'package:navbar/otherpages/productpage/product_model.dart';
-import 'package:navbar/otherpages/arsession.dart';
+import 'package:navbar/otherpages/arsession/arsession.dart';
 import 'package:navbar/otherpages/globals.dart';
 import 'package:navbar/models/user_model.dart' as userModels;
 import 'package:navbar/otherpages/productpage/product_controller.dart';
@@ -31,7 +31,7 @@ class ProductScreen extends StatelessWidget {
     ScrollController sController = ScrollController();
 
     List<Widget>? listBanners;
-
+    print(controller.product.images);
     listBanners = List.generate(
         controller.product.images.length - 1,
         (index) => Container(
@@ -44,6 +44,7 @@ class ProductScreen extends StatelessWidget {
               ),
             ));
     Categories category = Categories();
+
     return Scaffold(
         extendBodyBehindAppBar: true,
         appBar: CustomAppBar(
@@ -52,7 +53,7 @@ class ProductScreen extends StatelessWidget {
           targetIconColor: Colors.white,
           startIconColor: bgColor,
           scrollController: sController,
-          product: controller.product,
+          product: controller.productList,
           sideButtonExists: true,
         ),
         body: SingleChildScrollView(
@@ -334,7 +335,8 @@ class ProductScreen extends StatelessWidget {
                                 controller.product.id,
                                 controller.product.images[0],
                                 controller.product.name,
-                                controller.product.price,
+                                double.parse(controller.product.price
+                                    .toStringAsFixed(2)),
                                 controller.quantity.value,
                                 bgColor);
                             controller.checkProduct();
@@ -383,31 +385,6 @@ class ProductScreen extends StatelessWidget {
         ));
   }
 }
-
-// class ProductScreen extends StatefulWidget {
-//   ProductScreen({Key? key, required this.store}) : super(key: key);
-//   final Store store;
-
-//   @override
-//   State<ProductScreen> createState() => _ProductScreenState();
-// }
-
-// class _ProductScreenState extends State<ProductScreen> {
-//   userModels.User user = box.get('user');
-
-//   @override
-//   void initState() {
-//     super.initState();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final bgColor = HexColor(widget.store.imageColour);
-//     Size size = MediaQuery.of(context).size;
-//     final controller = Get.put(ProductController(widget.store));
-
-//     return }
-// }
 
 class ItemNumberButton extends StatefulWidget {
   ItemNumberButton(

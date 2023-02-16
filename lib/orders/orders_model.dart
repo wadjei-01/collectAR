@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:navbar/cart_page/cartmodel.dart';
 
@@ -9,6 +11,7 @@ class Orders {
   List<CartModel> items;
   Status status;
   Timestamp date;
+  double total;
 
   Orders(
       {required this.orderID,
@@ -17,7 +20,8 @@ class Orders {
       required this.userLocation,
       required this.items,
       required this.status,
-      required this.date});
+      required this.date,
+      required this.total});
 
   Map<String, dynamic> toJson() => {
         "orderID": orderID,
@@ -26,7 +30,8 @@ class Orders {
         "userLocation": userLocation,
         "items": items.map((e) => e.toJson()).toList(),
         "status": status.toJson(),
-        "date": date
+        "date": date,
+        "total": total
       };
 
   static Orders fromJson(Map<String, dynamic> jsonData) => Orders(
@@ -38,7 +43,8 @@ class Orders {
           .map<CartModel>((cartItems) => CartModel.fromJson(cartItems))
           .toList(),
       status: Status.fromJson(jsonData['status']),
-      date: jsonData['date']);
+      date: jsonData['date'],
+      total: jsonData['total']);
 }
 
 enum Status {

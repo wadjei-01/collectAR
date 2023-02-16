@@ -64,7 +64,7 @@ class HomePageController extends GetxController {
       query = FirebaseFirestore.instance.collection("store");
       update();
     }
-    carouselController.animateToPage(0);
+
     allFetched(false);
     isLoading(false);
     _lastDocument = null;

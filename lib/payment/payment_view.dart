@@ -171,7 +171,7 @@ class PaymentPage extends StatelessWidget {
                       style: MediumHeaderStyle(fontSize: 50.sp),
                     ),
                     Text(
-                      '₵${(cartController.totalCost() + (cartController.totalCost() * 0.01) + 15).toStringAsFixed(2)}',
+                      '₵${cartController.overallCost().toStringAsFixed(2)}',
                       style: MediumHeaderStyle(fontSize: 50.sp),
                     ),
                   ],
@@ -192,7 +192,7 @@ class PaymentPage extends StatelessWidget {
                       style: MediumHeaderStyle(fontSize: 50.sp),
                     ),
                     Text(
-                      '₵${(cartController.totalCost() + (cartController.totalCost() * 0.01) + 15).toStringAsFixed(2)}',
+                      '₵${cartController.overallCost().toStringAsFixed(2)}',
                       style: MediumHeaderStyle(fontSize: 50.sp),
                     ),
                   ],
@@ -219,7 +219,7 @@ class PaymentPage extends StatelessWidget {
                       ],
                     ),
                     Text(
-                      '₵${(cartController.totalCost() + (cartController.totalCost() * 0.01) + 15).toStringAsFixed(2)}',
+                      '₵${cartController.overallCost().toStringAsFixed(2)}',
                       style: RegularHeaderStyle(fontSize: 45.sp),
                     ),
                   ],

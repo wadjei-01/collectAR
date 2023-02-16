@@ -11,6 +11,7 @@ import 'package:navbar/orders/orders_view.dart';
 import 'package:navbar/otherpages/globals.dart';
 import 'package:navbar/theme/fonts.dart';
 import 'package:navbar/widgets.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class OrderHistory extends StatelessWidget {
   const OrderHistory({super.key});
@@ -21,7 +22,11 @@ class OrderHistory extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text("Orders"),
+        title: Text(
+          "Orders",
+          style:
+              BoldHeaderstextStyle(fontSize: 55.sp, color: AppColors.secondary),
+        ),
         elevation: 0,
         backgroundColor: Colors.white,
         foregroundColor: AppColors.secondary,
@@ -150,56 +155,82 @@ class OrderHistory extends StatelessWidget {
                                       ),
                                       SizedBox(
                                         height: 85.r,
-                                        child: AnimationLimiter(
-                                          child: ListView.builder(
-                                            shrinkWrap: true,
-                                            physics:
-                                                NeverScrollableScrollPhysics(),
-                                            scrollDirection: Axis.horizontal,
-                                            itemCount: orders.items.length,
-                                            itemBuilder: (context, value) =>
-                                                AnimationConfiguration
-                                                    .staggeredList(
-                                              position: value,
-                                              duration:
-                                                  Duration(milliseconds: 500),
-                                              child: SlideAnimation(
-                                                horizontalOffset: 50.0,
-                                                child: FadeInAnimation(
-                                                  child: value <= 10
-                                                      ? Align(
-                                                          widthFactor: 0.8,
-                                                          child: Container(
-                                                            clipBehavior:
-                                                                Clip.hardEdge,
-                                                            height: 85.r,
-                                                            width: 85.r,
-                                                            decoration: BoxDecoration(
-                                                                color: Color(
-                                                                    orders
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            AnimationLimiter(
+                                              child: ListView.builder(
+                                                shrinkWrap: true,
+                                                physics:
+                                                    NeverScrollableScrollPhysics(),
+                                                scrollDirection:
+                                                    Axis.horizontal,
+                                                itemCount: orders.items.length,
+                                                itemBuilder: (context, value) =>
+                                                    AnimationConfiguration
+                                                        .staggeredList(
+                                                  position: value,
+                                                  duration: Duration(
+                                                      milliseconds: 500),
+                                                  child: SlideAnimation(
+                                                    horizontalOffset: 50.0,
+                                                    child: FadeInAnimation(
+                                                      child: value <= 10
+                                                          ? Align(
+                                                              widthFactor: 0.8,
+                                                              child: Container(
+                                                                clipBehavior:
+                                                                    Clip.hardEdge,
+                                                                height: 85.r,
+                                                                width: 85.r,
+                                                                decoration: BoxDecoration(
+                                                                    color: Color(orders
                                                                         .items[
                                                                             value]
                                                                         .color),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
                                                                             45.r)),
-                                                            child:
-                                                                CachedNetworkImage(
-                                                              imageUrl: orders
-                                                                  .items[value]
-                                                                  .image,
-                                                              fit: BoxFit
-                                                                  .fitWidth,
-                                                              width: 70.r,
-                                                            ),
-                                                          ),
-                                                        )
-                                                      : SizedBox(),
+                                                                child:
+                                                                    CachedNetworkImage(
+                                                                  imageUrl: orders
+                                                                      .items[
+                                                                          value]
+                                                                      .image,
+                                                                  fit: BoxFit
+                                                                      .fitWidth,
+                                                                  width: 70.r,
+                                                                ),
+                                                              ),
+                                                            )
+                                                          : SizedBox(),
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
+                                            Container(
+                                              height: 70.h,
+                                              alignment: Alignment.center,
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 30.w),
+                                              decoration: BoxDecoration(
+                                                  color: AppColors.background,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          15.r)),
+                                              child: IntrinsicWidth(
+                                                child: Text(
+                                                  timeago.format(
+                                                      orders.date.toDate()),
+                                                  style: MediumHeaderStyle(
+                                                      color:
+                                                          AppColors.secondary),
+                                                ),
+                                              ),
+                                            )
+                                          ],
                                         ),
                                       )
                                     ],

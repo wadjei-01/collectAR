@@ -20,6 +20,7 @@ class CollectionsPage extends StatelessWidget {
         startIconColor: Colors.white,
         targetIconColor: Colors.black,
         sideButtonExists: true,
+        product: collection.products,
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 30.w),

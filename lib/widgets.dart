@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:navbar/otherpages/arsession.dart';
+import 'package:navbar/otherpages/arsession/arsession.dart';
 import 'package:navbar/otherpages/productpage/product_model.dart';
 import 'package:navbar/theme/fonts.dart';
 
@@ -127,7 +127,7 @@ class CustomAppBar extends StatefulWidget with PreferredSizeWidget {
   bool sideButtonExists = false;
   Function(bool)? boolValueCallback;
   Color? sideBtnNewColor;
-  Product? product;
+  List<Product>? product;
   @override
   State<CustomAppBar> createState() => _CustomAppBarState();
 
@@ -170,6 +170,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      toolbarHeight: 500.h,
       automaticallyImplyLeading: false,
       elevation: 0,
       backgroundColor: appBarColor,
@@ -183,8 +184,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
               Get.back();
             },
             child: Container(
-              width: 150.w,
-              height: 95.h,
+              width: 250.r,
+              height: 250.r,
+              color: appBarColor,
               child: Center(
                 child: Icon(
                   Icons.arrow_back_ios,
@@ -197,7 +199,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
           widget.sideButtonExists == true
               ? InkWell(
                   onTap: () {
-                    Get.to(ARSession(product: widget.product));
+                    Get.toNamed('/ar', arguments: widget.product);
                   },
                   child: Container(
                     width: 150.r,

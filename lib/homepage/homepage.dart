@@ -60,6 +60,7 @@ class HomePage extends StatelessWidget {
           child: SmartRefresher(
             onRefresh: () {
               controller.reset();
+              controller.carouselController.animateToPage(0);
             },
             controller: controller.refreshController,
             child: SingleChildScrollView(

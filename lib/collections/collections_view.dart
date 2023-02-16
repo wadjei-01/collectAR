@@ -105,7 +105,8 @@ class CollectionsView extends GetView<CollectionsController> {
                                                       controller.product!);
                                             } else {
                                               Get.to(() => CollectionsPage(),
-                                                  arguments: box.getAt(index));
+                                                  arguments: box.getAt(index)
+                                                      as Collections);
                                             }
                                           },
                                           onLongPress: () {

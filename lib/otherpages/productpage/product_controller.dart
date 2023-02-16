@@ -19,6 +19,8 @@ class ProductController extends GetxController
   RxInt quantity = 1.obs;
   RxBool isAdded = false.obs;
   Product product = Get.arguments;
+  List<Product> productList = [];
+
   var _relatedProducts;
 
   @override
@@ -65,10 +67,11 @@ class ProductController extends GetxController
 
   getData(Product product) {
     getQuantity(product.id);
+    productList.add(product);
     checkProduct();
     _relatedProducts = FirebaseFirestore.instance
         .collection('store')
-        .where("category", isEqualTo: product.category)
+        .where("category", arrayContains: product.category[0])
         .where('id', isNotEqualTo: product.id)
         .obs;
     update();

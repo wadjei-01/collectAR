@@ -48,7 +48,8 @@ class PaymentController extends GetxController {
         name: '${userDets.firstName} ${userDets.lastName}',
         items: _cartItems.box.toMap().values.toList(),
         status: Status.pending,
-        date: Timestamp.now());
+        date: Timestamp.now(),
+        total: _cartItems.overallCost());
     await FireStoreDB.firebaseFirestore
         .collection('orders')
         .add(orders.toJson());
