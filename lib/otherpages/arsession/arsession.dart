@@ -22,6 +22,12 @@ class ARSessionView extends GetView {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.chevron_left_rounded),
+          onPressed: () {
+            Get.back();
+          },
+        ),
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.black,
         elevation: 0,
@@ -34,6 +40,7 @@ class ARSessionView extends GetView {
         ),
         Align(
           alignment: AlignmentDirectional.bottomCenter,
+          heightFactor: 10,
           child: SizedBox(
               height: 200.h,
               child: ScrollSnapList(

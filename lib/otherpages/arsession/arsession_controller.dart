@@ -17,17 +17,21 @@ class ARSessionController extends GetxController {
 
   void _addProduct(ArCoreHitTestResult? plane) {
     if (plane != null) {
-      print(data[focusedIndex.value].modelAR);
-      final nodeObject = ArCoreReferenceNode(
-          objectUrl:
-              // "https://github.com/KhronosGroup/glTF-Sample-Models/raw/master/2.0/Duck/glTF/Duck.gltf"
-              "https://firebasestorage.googleapis.com/v0/b/navbar-e51ee.appspot.com/o/couch.glb?alt=media&token=35a45e43-427e-45bf-9f94-5541fe31bb94"
-          // data[focusedIndex.value].modelAR
-          ,
-          position: plane.pose.translation,
-          rotation: plane.pose.rotation);
+      try {
+        print(data[focusedIndex.value].modelAR);
+        final nodeObject = ArCoreReferenceNode(
+            name: data[focusedIndex.value].name,
+            objectUrl:
+                "https://raw.githubusercontent.com/wadjei-01/collectAR/master/assets/Chicken_01/Chicken_01.gltf?token=GHSAT0AAAAAAB46H2OVJFRXUWRLDDCYVZS4Y7RJNVA"
+            // "${data[focusedIndex.value].modelAR}"
+            ,
+            position: plane.pose.translation,
+            rotation: plane.pose.rotation);
 
-      arCoreController.addArCoreNodeWithAnchor(nodeObject);
+        arCoreController.addArCoreNode(nodeObject);
+      } catch (e) {
+        print("Errorrr!!" + e.toString());
+      }
     }
   }
 
