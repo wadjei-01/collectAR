@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:navbar/categories/categoriesview.dart';
 import 'package:navbar/collections/collection_page.dart';
 import 'package:navbar/collections/collections_model.dart';
@@ -156,11 +157,15 @@ class _NavBarState extends State<NavBar> {
                     onTabChange: (index) {
                       setState(() {
                         prevPage = currentPage;
+                        currentPage = index;
                         if (prevPage == 1) {
                           Get.delete<CollectionsController>();
                           Get.delete<NewCollectionsController>();
+                          if (currentPage == 1) {
+                            Get.put(CollectionsController());
+                            Get.put(NewCollectionsController());
+                          }
                         }
-                        currentPage = index;
                       });
                     },
                     gap: 20.h,
@@ -172,14 +177,16 @@ class _NavBarState extends State<NavBar> {
                     tabBackgroundColor: AppColors.secondary,
                     tabs: [
                       const GButton(icon: Icons.home_outlined),
-                      const GButton(icon: Icons.menu),
+                      const GButton(icon: Ionicons.albums_sharp),
                       GButton(
                         icon: Icons.shopping_basket_outlined,
                         leading: currentPage == 2 || number.isEmpty
                             ? null
                             : badge.Badge(
-                                badgeColor: AppColors.primary,
-                                elevation: 0,
+                                // badgeColor: AppColors.primary,
+                                // elevation: 0,
+                                badgeStyle: badge.BadgeStyle(
+                                    badgeColor: AppColors.primary),
                                 position: badge.BadgePosition.topEnd(
                                     top: -12, end: -12),
                                 badgeContent: Text(

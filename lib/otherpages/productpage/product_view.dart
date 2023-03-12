@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:navbar/categories/categories_model.dart';
 import 'package:navbar/collections/collections_view.dart';
 import 'package:navbar/main.dart';
@@ -117,8 +118,10 @@ class ProductScreen extends StatelessWidget {
                                   padding: EdgeInsets.all(15.r),
                                   child: Center(
                                     child: SizedBox(
-                                      child: SvgPicture.asset(
-                                          'assets/images/icons/collections icon.svg'),
+                                      child: Icon(
+                                        Ionicons.albums_sharp,
+                                        color: Colors.white,
+                                      ),
                                     ),
                                   ),
                                 ),

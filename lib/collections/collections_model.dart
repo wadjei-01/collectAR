@@ -18,12 +18,6 @@ class Collections extends HiveObject {
   Collections(this.collectionName, this.color);
 
   addProduct(int index, Product product) {
-    // List<Product>? tempProducts = [
-    //   ...Boxes.getCollections().getAt(index)!.products!
-    // ];
-    // tempProducts.add(product);
-
-    // Boxes.getCollections().putAt(index, Collections(products: tempProducts));
     Boxes.getCollections().getAt(index)!.products!.add(product);
     Boxes.getCollections().getAt(index)!.save();
   }

@@ -34,8 +34,9 @@ class CollectionsPage extends StatelessWidget {
                     child: Text("Nothing to show"),
                   )
                 : GridView.builder(
+                    controller: scrollController,
                     shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
+                    physics: const ClampingScrollPhysics(),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       mainAxisSpacing: 30.h,

@@ -22,24 +22,21 @@ class ProductAdapter extends TypeAdapter<Product> {
       description: fields[2] as String,
       details: fields[3] as String,
       materials: fields[4] as dynamic,
-      colorText: fields[5] as String,
       price: fields[6] as dynamic,
       stock: fields[7] as int,
       images: (fields[8] as List).cast<dynamic>(),
       imageColour: fields[9] as dynamic,
-      primaryColour: fields[10] as String,
-      secondaryColour: fields[11] as String,
-      tetiaryColour: fields[12] as String,
-      dateAdded: fields[13] as dynamic,
-      category: (fields[14] as List).cast<dynamic>(),
-      modelAR: fields[15] as String,
+      dateAdded: fields[10] as dynamic,
+      category: (fields[11] as List).cast<dynamic>(),
+      modelAR: fields[13] as String,
+      measurements: (fields[12] as List).cast<dynamic>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, Product obj) {
     writer
-      ..writeByte(16)
+      ..writeByte(13)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -50,8 +47,6 @@ class ProductAdapter extends TypeAdapter<Product> {
       ..write(obj.details)
       ..writeByte(4)
       ..write(obj.materials)
-      ..writeByte(5)
-      ..write(obj.colorText)
       ..writeByte(6)
       ..write(obj.price)
       ..writeByte(7)
@@ -61,16 +56,12 @@ class ProductAdapter extends TypeAdapter<Product> {
       ..writeByte(9)
       ..write(obj.imageColour)
       ..writeByte(10)
-      ..write(obj.primaryColour)
-      ..writeByte(11)
-      ..write(obj.secondaryColour)
-      ..writeByte(12)
-      ..write(obj.tetiaryColour)
-      ..writeByte(13)
       ..write(obj.dateAdded)
-      ..writeByte(14)
+      ..writeByte(11)
       ..write(obj.category)
-      ..writeByte(15)
+      ..writeByte(12)
+      ..write(obj.measurements)
+      ..writeByte(13)
       ..write(obj.modelAR);
   }
 

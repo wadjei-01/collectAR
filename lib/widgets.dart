@@ -41,7 +41,7 @@ class _CustomExpansionTileState extends State<CustomExpansionTile> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            height: 120.h,
+            height: 150.h,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -458,7 +458,7 @@ class ProductCard extends StatelessWidget {
                     child: Center(
                       child: CachedNetworkImage(
                         imageUrl: storedProducts.images[0],
-                        height: 230.h,
+                        height: 250.h,
                       ),
                     ),
                   );

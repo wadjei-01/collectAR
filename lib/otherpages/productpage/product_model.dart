@@ -14,8 +14,6 @@ class Product {
   final String details;
   @HiveField(4)
   final dynamic materials;
-  @HiveField(5)
-  final String colorText;
   @HiveField(6)
   final dynamic price;
   @HiveField(7)
@@ -25,16 +23,12 @@ class Product {
   @HiveField(9)
   final dynamic imageColour;
   @HiveField(10)
-  final String primaryColour;
-  @HiveField(11)
-  final String secondaryColour;
-  @HiveField(12)
-  final String tetiaryColour;
-  @HiveField(13)
   final dynamic dateAdded;
-  @HiveField(14)
+  @HiveField(11)
   final List<dynamic> category;
-  @HiveField(15)
+  @HiveField(12)
+  final List<dynamic> measurements;
+  @HiveField(13)
   final String modelAR;
 
   Product(
@@ -43,17 +37,14 @@ class Product {
       required this.description,
       required this.details,
       required this.materials,
-      required this.colorText,
       required this.price,
       required this.stock,
       required this.images,
       required this.imageColour,
-      required this.primaryColour,
-      required this.secondaryColour,
-      required this.tetiaryColour,
       required this.dateAdded,
       required this.category,
-      required this.modelAR});
+      required this.modelAR,
+      required this.measurements});
 
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -65,18 +56,15 @@ class Product {
         'materials': materials,
         'images': images,
         'imageColour': imageColour,
-        'primaryColour': primaryColour,
-        'secondaryColour': secondaryColour,
-        'tetiaryColour': tetiaryColour,
         'dateAdded': dateAdded,
         'category': category,
         'modelAR': modelAR,
+        'measurements': measurements
       };
 
   static Product fromJson(Map<String, dynamic> json) => Product(
       id: json['id'],
       name: json['name'],
-      colorText: json['colorText'],
       description: json['description'],
       details: json['details'],
       materials: json['materials'],
@@ -84,12 +72,10 @@ class Product {
       stock: json['stock'],
       images: json['images'],
       imageColour: json['imageColour'],
-      primaryColour: json['primaryColour'],
-      secondaryColour: json['secondaryColour'],
-      tetiaryColour: json['tetiaryColour'],
       dateAdded: json['dateAdded'],
       category: json['category'],
-      modelAR: json['modelAR']);
+      modelAR: json['modelAR'],
+      measurements: json['measurements']);
 }
 
 class TimestampAdapter extends TypeAdapter<Timestamp> {
