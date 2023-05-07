@@ -1,9 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:navbar/otherpages/productpage/product_model.dart';
 import 'package:hive/hive.dart';
-
 import '../box/boxes.dart';
-import 'collections_controller.dart';
+import '../productpage/product_model.dart';
 part 'collections_model.g.dart';
 
 @HiveType(typeId: 1)
@@ -17,12 +14,14 @@ class Collections extends HiveObject {
 
   Collections(this.collectionName, this.color);
 
+  //Adds a product to a specific collection using the index
   addProduct(int index, Product product) {
     Boxes.getCollections().getAt(index)!.products!.add(product);
     Boxes.getCollections().getAt(index)!.save();
   }
 
-  deleteProduct(int index) {
-    Boxes.getCollections().getAt(index)!.products!.removeAt(index);
+  //Deletes a product from a specific collection
+  deleteProduct(int collectionIndex, int index) {
+    Boxes.getCollections().getAt(collectionIndex)!.products!.removeAt(index);
   }
 }

@@ -1,21 +1,18 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:navbar/order_history/order_history_controller.dart';
-import 'package:navbar/otherpages/globals.dart';
 import 'package:navbar/payment/payment_view.dart';
 import 'package:navbar/theme/fonts.dart';
 import 'package:navbar/widgets.dart';
+import '../theme/globals.dart';
 import '../order_history/order_history_view.dart';
+import '../productpage/product_view.dart';
 import 'cartcontroller.dart';
 import 'cartmodel.dart';
-import '../../otherpages/productpage/product_view.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({Key? key}) : super(key: key);
@@ -26,12 +23,11 @@ class CartPage extends StatefulWidget {
 
 class _CartPageState extends State<CartPage> {
   final CartController cartVM = Get.put(CartController());
-  final orderHistoryController = Get.find<OrderHistoryController>();
 
   @override
   Widget build(BuildContext context) {
-    orderHistoryController.checkOrderHistory();
     return Scaffold(
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         title: Text('Cart',
             style: BoldHeaderstextStyle(
@@ -43,13 +39,18 @@ class _CartPageState extends State<CartPage> {
             onPressed: () {
               Get.to(() => OrderHistory());
             },
-            icon: Badge(
-                largeSize: 30.r,
-                smallSize: 25.r,
-                backgroundColor: AppColors.primary,
-                alignment: AlignmentDirectional.topStart,
-                child: Icon(Ionicons.newspaper),
-                isLabelVisible: orderHistoryController.hasData.value),
+            icon: GetBuilder<OrderHistoryController>(
+                builder: (orderHistoryController) {
+              orderHistoryController.checkOrderHistory();
+
+              return Badge(
+                  largeSize: 30.r,
+                  smallSize: 25.r,
+                  backgroundColor: AppColors.primary,
+                  alignment: AlignmentDirectional.topStart,
+                  child: Icon(Ionicons.newspaper),
+                  isLabelVisible: orderHistoryController.hasData.value);
+            }),
             color: AppColors.secondary,
           )
         ],
@@ -59,18 +60,21 @@ class _CartPageState extends State<CartPage> {
           GetBuilder<CartController>(
               init: cartVM,
               builder: (value) {
-                if (value.box.isNotEmpty) {
+                if (value.cartBox.isNotEmpty) {
                   return SizedBox(
-                    height: 0.5.sh,
+                    height: 0.65.sh,
                     child: ListView.builder(
+                        padding: EdgeInsets.only(bottom: 150.h),
                         shrinkWrap: true,
-                        itemCount: value.box.length,
+                        itemCount: value.getItemNum(),
                         itemBuilder: (context, index) {
-                          final quantity = value.box.getAt(index)!.quantity.obs;
-                          final item = value.box.getAt(index)!;
+                          final quantity =
+                              value.cartBox.getAt(index)!.quantity.obs;
+                          final item = value.cartBox.getAt(index)!;
                           return Dismissible(
                             key: Key(item.id),
                             background: Container(
+                              margin: EdgeInsets.all(20.r),
                               color: Colors.red,
                               child: Container(
                                 height: 50,
@@ -81,257 +85,83 @@ class _CartPageState extends State<CartPage> {
                                 ),
                               ),
                             ),
-                            onDismissed: (direction) => value.del(index),
-                            child: Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20, vertical: 10),
-                                      child: Container(
-                                        height: 100,
-                                        width: 100,
-                                        decoration: BoxDecoration(
-                                            image: DecorationImage(
-                                                image: AssetImage(
-                                                    'assets/images/gridbg.png'),
-                                                fit: BoxFit.fill,
-                                                opacity: 0.3),
-                                            border: Border.all(
-                                                color: Color(value.box
-                                                    .getAt(index)!
-                                                    .color)),
-                                            borderRadius:
-                                                const BorderRadius.all(
-                                                    Radius.circular(5)),
-                                            color: Color(
-                                                value.box.getAt(index)!.color)),
-                                        child: Center(
-                                          child: CachedNetworkImage(
-                                            imageUrl:
-                                                value.box.getAt(index)!.image,
-                                            width: 140.w,
+                            onDismissed: (direction) =>
+                                value.deleteProductFromCart(index),
+                            child: Container(
+                              margin: EdgeInsets.all(20.r),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30.r),
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.3),
+                                    spreadRadius: 1.5,
+                                    blurRadius: 5,
+                                    offset: Offset(
+                                        0, 3), // changes position of shadow
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20, vertical: 10),
+                                        child: Container(
+                                          height: 200.r,
+                                          width: 200.r,
+                                          decoration: BoxDecoration(
+                                              image: DecorationImage(
+                                                  image: AssetImage(
+                                                      'assets/images/gridbg.png'),
+                                                  fit: BoxFit.fill,
+                                                  opacity: 0.3),
+                                              border: Border.all(
+                                                  color: Color(value.cartBox
+                                                      .getAt(index)!
+                                                      .color)),
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                      Radius.circular(5)),
+                                              color: Color(value.cartBox
+                                                  .getAt(index)!
+                                                  .color)),
+                                          child: Center(
+                                            child: CachedNetworkImage(
+                                              imageUrl: value.cartBox
+                                                  .getAt(index)!
+                                                  .image,
+                                              width: 140.w,
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10),
-                                      child: Container(
-                                        height: 100,
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            SizedBox(
-                                              width: 350.w,
-                                              child: Text(
-                                                value.box.getAt(index)!.name,
-                                                style: TextStyle(
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    fontWeight: FontWeight.w500,
-                                                    fontSize: 19,
-                                                    fontFamily: 'Gotham',
-                                                    color: AppColors.darken(
-                                                        Color(value.box
-                                                            .getAt(index)!
-                                                            .color))),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              width: 350.w,
-                                              child: Text(
-                                                '${value.box.getAt(index)!.id}',
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.w500,
-                                                    fontSize: 14,
-                                                    fontFamily:
-                                                        'Montserrat-Medium',
-                                                    color: Color.fromARGB(
-                                                        103, 0, 0, 0)),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 40.h,
-                                            ),
-                                            IntrinsicHeight(
-                                              child: IntrinsicWidth(
-                                                child: AnimatedContainer(
-                                                  decoration: BoxDecoration(
-                                                      color: Color(value.box
-                                                              .getAt(index)!
-                                                              .color)
-                                                          .withAlpha(20),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              15.r)),
-                                                  duration: Duration(
-                                                      milliseconds: 500),
-                                                  child: Padding(
-                                                    padding:
-                                                        EdgeInsets.all(20.r),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceEvenly,
-                                                      children: [
-                                                        Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              ItemNumberButton(
-                                                                bgColor: Color(
-                                                                    value
-                                                                        .box
-                                                                        .getAt(
-                                                                            index)!
-                                                                        .color),
-                                                                buttonSize:
-                                                                    66.r,
-                                                                buttonRadius:
-                                                                    33.r,
-                                                                isAdd: false,
-                                                                onCountChange:
-                                                                    () {
-                                                                  quantity
-                                                                      .value--;
-                                                                  value.add(
-                                                                      value.box
-                                                                          .getAt(
-                                                                              index)!
-                                                                          .id,
-                                                                      value.box
-                                                                          .getAt(
-                                                                              index)!
-                                                                          .image,
-                                                                      value.box
-                                                                          .getAt(
-                                                                              index)!
-                                                                          .name,
-                                                                      value.box
-                                                                          .getAt(
-                                                                              index)!
-                                                                          .price,
-                                                                      quantity
-                                                                          .value,
-                                                                      Color(value
-                                                                          .box
-                                                                          .getAt(
-                                                                              index)!
-                                                                          .color));
-
-                                                                  if (quantity
-                                                                          .value ==
-                                                                      0) {
-                                                                    value.del(
-                                                                        index);
-                                                                  }
-                                                                },
-                                                              ),
-                                                              Padding(
-                                                                padding: const EdgeInsets
-                                                                        .symmetric(
-                                                                    horizontal:
-                                                                        5),
-                                                                child: SizedBox(
-                                                                  width: 30,
-                                                                  child: Center(
-                                                                    child: Obx(
-                                                                      () => Text(
-                                                                          value.box.getAt(index)!.quantity <= 9
-                                                                              ? '0${quantity.value}'
-                                                                              : '${quantity.value}',
-                                                                          style: const TextStyle(
-                                                                              fontFamily: 'Gotham',
-                                                                              color: Colors.black,
-                                                                              fontSize: 17)),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              ItemNumberButton(
-                                                                bgColor: Color(
-                                                                    value
-                                                                        .box
-                                                                        .getAt(
-                                                                            index)!
-                                                                        .color),
-                                                                isAdd: true,
-                                                                buttonSize:
-                                                                    66.r,
-                                                                buttonRadius:
-                                                                    33.r,
-                                                                onCountChange:
-                                                                    () {
-                                                                  quantity
-                                                                      .value++;
-                                                                  value.add(
-                                                                      value.box
-                                                                          .getAt(
-                                                                              index)!
-                                                                          .id,
-                                                                      value.box
-                                                                          .getAt(
-                                                                              index)!
-                                                                          .image,
-                                                                      value.box
-                                                                          .getAt(
-                                                                              index)!
-                                                                          .name,
-                                                                      value.box
-                                                                          .getAt(
-                                                                              index)!
-                                                                          .price,
-                                                                      quantity
-                                                                          .value,
-                                                                      Color(value
-                                                                          .box
-                                                                          .getAt(
-                                                                              index)!
-                                                                          .color));
-                                                                },
-                                                              ),
-                                                            ]),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
+                                      midSection(value, index, quantity),
+                                      SizedBox(
+                                        width: 30.w,
+                                      ),
+                                      SizedBox(
+                                        width: 300.w,
+                                        child: Text(
+                                          '₵  ${(value.cartBox.getAt(index)!.price * quantity.value).toStringAsFixed(2)}',
+                                          style: BoldHeaderstextStyle(
+                                              color: AppColors.secondary,
+                                              fontSize: 45.sp),
                                         ),
                                       ),
-                                    ),
-                                    SizedBox(
-                                      width: 30.w,
-                                    ),
-                                    Text(
-                                      '₵ ${(value.box.getAt(index)!.price * quantity.value).toStringAsFixed(2)}',
-                                      style: BoldHeaderstextStyle(
-                                          color: AppColors.secondary,
-                                          fontSize: 50.sp),
-                                    ),
-                                    SizedBox(
-                                      width: 30.w,
-                                    ),
-                                  ],
-                                ),
-                                Divider(
-                                  color: AppColors.lighten(Colors.grey, 0.2),
-                                  thickness: 0.5,
-                                  indent: 20,
-                                  endIndent: 20,
-                                )
-                              ],
+                                      SizedBox(
+                                        width: 30.w,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           );
                         }),
@@ -361,13 +191,28 @@ class _CartPageState extends State<CartPage> {
             alignment: Alignment.bottomCenter,
             child: GetBuilder<CartController>(builder: (controller) {
               return Visibility(
-                visible: controller.totalCost() != 0,
+                visible: controller.cartBox.isNotEmpty,
                 child: IntrinsicHeight(
                   child: AnimatedSize(
                     duration: Duration(milliseconds: 2000),
                     child: Container(
                       width: 1.sw,
-                      color: Colors.white,
+
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(30.r),
+                            topRight: Radius.circular(30.r)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.15),
+                            spreadRadius: 10,
+                            blurRadius: 10,
+                            offset:
+                                Offset(0, -15), // changes position of shadow
+                          ),
+                        ],
+                      ),
                       // height: 0.35.sh,
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 50.w),
@@ -375,112 +220,6 @@ class _CartPageState extends State<CartPage> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            InkWell(
-                              onTap: () {
-                                controller.extend();
-                              },
-                              child: Column(children: [
-                                SizedBox(
-                                  height: 30.h,
-                                ),
-                                Center(
-                                    child: AnimatedSwitcher(
-                                  duration: Duration(milliseconds: 750),
-                                  child: controller.isExtended.isTrue
-                                      ? Icon(
-                                          Ionicons.chevron_up,
-                                          color: AppColors.primary,
-                                        )
-                                      : Icon(
-                                          Ionicons.chevron_down,
-                                          color: AppColors.secondary,
-                                        ),
-                                )),
-                                SizedBox(
-                                  height: 30.h,
-                                ),
-                              ]),
-                            ),
-                            Visibility(
-                                visible: controller.isExtended.value,
-                                child: AnimatedContainer(
-                                  duration: Duration(milliseconds: 1000),
-                                  height: controller.isExtended.isTrue
-                                      ? 300.h
-                                      : 0.h,
-                                  decoration: BoxDecoration(
-                                      color: AppColors.lighten(
-                                          AppColors.title!, 0.5),
-                                      borderRadius:
-                                          BorderRadius.circular(55.r)),
-                                  child: Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 50.w),
-                                    child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          SizedBox(
-                                            height: 50.h,
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                'Item total',
-                                                style: BoldHeaderstextStyle(
-                                                    color: AppColors.lighten(
-                                                        AppColors.title!, 0.1),
-                                                    fontSize: 50.sp),
-                                              ),
-                                              Text(
-                                                '₵${controller.totalCost().toStringAsFixed(2)}',
-                                                style: BoldHeaderstextStyle(
-                                                    color: AppColors.lighten(
-                                                        AppColors.title!, 0.1),
-                                                    fontSize: 50.sp),
-                                              )
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            height: 50.h,
-                                          ),
-                                          controller.totalCost() == 0
-                                              ? SizedBox()
-                                              : Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      'Tax',
-                                                      style: BoldHeaderstextStyle(
-                                                          color:
-                                                              AppColors.lighten(
-                                                                  AppColors
-                                                                      .title!,
-                                                                  0.1),
-                                                          fontSize: 50.sp),
-                                                    ),
-                                                    Text(
-                                                      "₵${(cartVM.totalCost() * 0.01).toStringAsFixed(2)}",
-                                                      style: BoldHeaderstextStyle(
-                                                          color:
-                                                              AppColors.lighten(
-                                                                  AppColors
-                                                                      .title!,
-                                                                  0.1),
-                                                          fontSize: 50.sp),
-                                                    )
-                                                  ],
-                                                ),
-                                          SizedBox(
-                                            height: 70.h,
-                                          ),
-                                        ]),
-                                  ),
-                                )),
                             SizedBox(
                               height: 50.h,
                             ),
@@ -510,7 +249,7 @@ class _CartPageState extends State<CartPage> {
                                       height: 40.h,
                                     ),
                                     Text(
-                                      "₵${(controller.totalCost() + (controller.totalCost() * 0.01)).toStringAsFixed(2)}",
+                                      "₵${controller.getOverallCost()}",
                                       style: MediumHeaderStyle(
                                           color: AppColors.lighten(
                                               AppColors.primary, 0.1),
@@ -544,6 +283,107 @@ class _CartPageState extends State<CartPage> {
             }),
           )
         ]),
+      ),
+    );
+  }
+
+  Padding midSection(CartController value, int index, RxInt quantity) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Container(
+        height: 100,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 350.w,
+              child: Text(
+                value.cartBox.getAt(index)!.name,
+                style: TextStyle(
+                    overflow: TextOverflow.ellipsis,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 45.sp,
+                    fontFamily: 'Gotham',
+                    color: AppColors.darken(
+                        Color(value.cartBox.getAt(index)!.color))),
+              ),
+            ),
+            SizedBox(
+              width: 350.w,
+              child: Text(
+                '${value.cartBox.getAt(index)!.id}',
+                style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
+                    fontFamily: 'Montserrat-Medium',
+                    color: Color.fromARGB(103, 0, 0, 0)),
+              ),
+            ),
+            SizedBox(
+              height: 20.h,
+            ),
+            quantityButtons(value, index, quantity),
+          ],
+        ),
+      ),
+    );
+  }
+
+  IntrinsicHeight quantityButtons(
+      CartController value, int index, RxInt quantity) {
+    return IntrinsicHeight(
+      child: IntrinsicWidth(
+        child: AnimatedContainer(
+          decoration: BoxDecoration(
+              color: Color(value.cartBox.getAt(index)!.color).withAlpha(20),
+              borderRadius: BorderRadius.circular(15.r)),
+          duration: Duration(milliseconds: 500),
+          child: Padding(
+            padding: EdgeInsets.all(20.r),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+                  AdjustQuantityButton(
+                    bgColor: Color(value.cartBox.getAt(index)!.color),
+                    buttonSize: 50.r,
+                    buttonRadius: 25.r,
+                    isAdd: false,
+                    onCountChange: () =>
+                        value.decreaseQuantity(index, quantity),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    child: SizedBox(
+                      width: 30,
+                      child: Center(
+                        child: Obx(
+                          () => Text(
+                              value.cartBox.getAt(index)!.quantity <= 9
+                                  ? '0${quantity.value}'
+                                  : '${quantity.value}',
+                              style: TextStyle(
+                                  fontFamily: 'Gotham',
+                                  color: Colors.black,
+                                  fontSize: 35.sp)),
+                        ),
+                      ),
+                    ),
+                  ),
+                  AdjustQuantityButton(
+                    bgColor: Color(value.cartBox.getAt(index)!.color),
+                    isAdd: true,
+                    buttonSize: 50.r,
+                    buttonRadius: 25.r,
+                    onCountChange: () =>
+                        value.increaseQuantity(index, quantity),
+                  ),
+                ]),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

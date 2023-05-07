@@ -4,10 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:get/get.dart';
 import 'package:navbar/categories/categoriescontroller.dart';
+import 'package:navbar/homepage/homepage_controller.dart';
 import 'package:navbar/widgets.dart';
-
-import '../otherpages/globals.dart';
-import '../otherpages/productpage/product_model.dart';
+import '../productpage/product_controller.dart';
+import '../theme/globals.dart';
+import '../productpage/product_model.dart';
 import '../theme/fonts.dart';
 
 class CategoriesView extends GetView<CategoriesController> {
@@ -42,7 +43,7 @@ class CategoriesView extends GetView<CategoriesController> {
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         mainAxisSpacing: 30.h,
-                        childAspectRatio: 2.w / 2.2.h,
+                        childAspectRatio: 2.w / 2.1.h,
                         crossAxisSpacing: 30.w,
                       ),
                       itemCount: snapshot.data!.docs.length,
@@ -57,10 +58,10 @@ class CategoriesView extends GetView<CategoriesController> {
                           child: FadeInAnimation(
                             child: SlideAnimation(
                               verticalOffset: 50.0,
-                              child: ProductCard(
+                              child: ProductCard_2(
                                   storedProducts: product,
                                   onPressed: () {
-                                    onCardPressed(product);
+                                    displayProduct(product);
                                   }),
                             ),
                           ),

@@ -9,9 +9,9 @@ import 'package:lottie/lottie.dart';
 import 'package:navbar/cart_page/cart_page.dart';
 import 'package:navbar/firebase/firebaseDB.dart';
 import 'package:navbar/orders/orders_model.dart';
-import 'package:navbar/otherpages/globals.dart';
 import 'package:navbar/theme/fonts.dart';
 
+import '../theme/globals.dart';
 import '../widgets.dart';
 
 class OrdersPage extends StatelessWidget {
@@ -53,7 +53,6 @@ class OrdersPage extends StatelessWidget {
             ),
           ),
           elevation: 0,
-          actions: [],
         ),
       ),
       body: StreamBuilder<QuerySnapshot>(

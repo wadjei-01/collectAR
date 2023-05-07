@@ -11,15 +11,11 @@ import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:navbar/categories/categoriesview.dart';
 import 'package:navbar/homepage/homepage_controller.dart';
-import 'package:navbar/otherpages/category_selection_page.dart';
-import 'package:navbar/otherpages/globals.dart';
-import 'package:navbar/otherpages/productpage/product_controller.dart';
-import 'package:navbar/otherpages/productpage/product_view.dart';
-import 'package:navbar/otherpages/search.dart';
 import 'package:navbar/theme/fonts.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import '../theme/globals.dart';
 import '../main.dart';
-import '../otherpages/productpage/product_model.dart';
+import '../search.dart';
 import '../widgets.dart';
 
 class HomePage extends StatelessWidget {
@@ -65,111 +61,106 @@ class HomePage extends StatelessWidget {
             controller: controller.refreshController,
             child: SingleChildScrollView(
               controller: scrollController,
-              child: Builder(builder: (context) {
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 40.h,
-                    ),
-                    CategoriesCarousel(),
-                    SizedBox(
-                      height: 40.h,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 45.w),
-                      child:
-                          GetBuilder<HomePageController>(builder: (controller) {
-                        return StreamBuilder<Object>(
-                            stream: controller.query.snapshots(),
-                            builder: (context, snapshot) {
-                              if (snapshot.hasError) {
-                                return Center(
-                                  child: Column(
-                                    children: [
-                                      SvgPicture.asset(
-                                        'assets/images/icons/error.svg',
-                                        color:
-                                            Color.fromARGB(255, 207, 207, 207),
-                                        width: 150.w,
-                                      ),
-                                      const Text('Something went wrong')
-                                    ],
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 40.h,
+                  ),
+                  CategoriesCarousel(),
+                  SizedBox(
+                    height: 20.h,
+                  ),
+                  GetBuilder<HomePageController>(builder: (controller) {
+                    return StreamBuilder<Object>(
+                        stream: controller.query.snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return Center(
+                              child: Column(
+                                children: [
+                                  SvgPicture.asset(
+                                    'assets/images/icons/error.svg',
+                                    color: Color.fromARGB(255, 207, 207, 207),
+                                    width: 150.w,
+                                  ),
+                                  const Text('Something went wrong')
+                                ],
+                              ),
+                            );
+                          }
+                          return GridView.builder(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 45.w, vertical: 30.h),
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                mainAxisSpacing: 30.h,
+                                childAspectRatio: 2.w / 2.2.h,
+                                crossAxisSpacing: 30.w,
+                              ),
+                              itemCount: controller.data.length,
+                              itemBuilder: (_, index) {
+                                return AnimationConfiguration.staggeredGrid(
+                                  position: index,
+                                  duration: Duration(milliseconds: 500),
+                                  columnCount: 2,
+                                  child: SlideAnimation(
+                                    child: FadeInAnimation(
+                                      child: ProductCard_2(
+                                          storedProducts:
+                                              controller.data[index],
+                                          controller: controller,
+                                          onPressed: () {
+                                            displayProduct(
+                                                controller.data[index]);
+                                          }),
+                                    ),
                                   ),
                                 );
-                              }
-                              return GridView.builder(
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2,
-                                    mainAxisSpacing: 30.h,
-                                    childAspectRatio: 2.w / 2.2.h,
-                                    crossAxisSpacing: 30.w,
-                                  ),
-                                  itemCount: controller.data.length,
-                                  itemBuilder: (_, index) {
-                                    return AnimationConfiguration.staggeredGrid(
-                                      position: index,
+                              });
+                        });
+                  }),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      AnimatedSize(
+                          curve: Curves.easeInOut,
+                          duration: const Duration(milliseconds: 500),
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height:
+                                    controller.allFetched.isTrue ? 5.h : 60.h,
+                                width: double.infinity,
+                              ),
+                              Obx(() {
+                                return Column(
+                                  children: [
+                                    controller.isLoading.isTrue
+                                        ? LoadingIndicator()
+                                        : SizedBox(
+                                            height: 30.h,
+                                          ),
+                                    AnimatedContainer(
                                       duration: Duration(milliseconds: 500),
-                                      columnCount: 2,
-                                      child: SlideAnimation(
-                                        child: FadeInAnimation(
-                                          child: ProductCard(
-                                              storedProducts:
-                                                  controller.data[index],
-                                              onPressed: () {
-                                                onCardPressed(
-                                                    controller.data[index]);
-                                              }),
-                                        ),
-                                      ),
-                                    );
-                                  });
-                            });
-                      }),
-                    ),
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        AnimatedSize(
-                            curve: Curves.easeInOut,
-                            duration: const Duration(milliseconds: 500),
-                            child: Column(
-                              children: [
-                                SizedBox(
-                                  height: controller.allFetched.isTrue
-                                      ? 15.h
-                                      : 60.h,
-                                  width: double.infinity,
-                                ),
-                                Obx(() {
-                                  return Column(
-                                    children: [
-                                      controller.isLoading.isTrue
-                                          ? LoadingIndicator()
-                                          : SizedBox(
-                                              height: 30.h,
-                                            ),
-                                      AnimatedContainer(
-                                        duration: Duration(milliseconds: 500),
-                                        height: controller.allFetched.isTrue
-                                            ? 15.h
-                                            : 30.h,
-                                        width: double.infinity,
-                                      )
-                                    ],
-                                  );
-                                })
-                              ],
-                            )),
-                      ],
-                    )
-                  ],
-                );
-              }),
+                                      height: controller.allFetched.isTrue
+                                          ? 0.h
+                                          : 40.h,
+                                      width: double.infinity,
+                                    )
+                                  ],
+                                );
+                              })
+                            ],
+                          )),
+                    ],
+                  )
+                ],
+              ),
             ),
           ),
         ));

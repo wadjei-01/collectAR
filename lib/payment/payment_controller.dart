@@ -7,6 +7,7 @@ import 'package:navbar/cart_page/cartmodel.dart';
 import 'package:navbar/firebase/firebaseDB.dart';
 import 'package:navbar/main.dart';
 
+import '../box/boxes.dart';
 import '../orders/orders_model.dart';
 import 'dart:math';
 
@@ -29,7 +30,7 @@ class PaymentController extends GetxController {
     String year = DateTime.now().year.toString().substring(2, 4);
     String hour = DateTime.now().hour.toString();
     String minute = DateTime.now().minute.toString();
-    userModel.User userDets = box.get('user');
+    userModel.User userDets = Boxes.getUser().get('user')!;
     oID = auth.currentUser!.uid.substring(0, 5) +
         randomize +
         "-" +
@@ -46,10 +47,10 @@ class PaymentController extends GetxController {
         userID: auth.currentUser!.uid,
         userLocation: userDets.location,
         name: '${userDets.firstName} ${userDets.lastName}',
-        items: _cartItems.box.toMap().values.toList(),
+        items: _cartItems.cartBox.toMap().values.toList(),
         status: Status.pending,
         date: Timestamp.now(),
-        total: _cartItems.overallCost());
+        total: double.parse(_cartItems.getOverallCost()));
     await FireStoreDB.firebaseFirestore
         .collection('orders')
         .add(orders.toJson());

@@ -1,7 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:navbar/auth/authpage.dart';
-import 'package:navbar/auth/login_page.dart';
+import 'package:navbar/auth/login/login_page.dart';
 import '../main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 

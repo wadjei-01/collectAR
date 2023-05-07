@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:navbar/models/user_model.dart' as usermodel;
 
-import '../otherpages/globals.dart';
+import '../theme/globals.dart';
 import '../widgets.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -24,14 +24,26 @@ class _RegisterPageState extends State<RegisterPage> {
   final _locationController = TextEditingController();
 
   Future signUp() async {
-    //user authentication
-    if (isConfirmed()) {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim());
-      //user details
-      addUserDetails(_firstNameController.text.trim(),
-          _lastNameController.text.trim(), _emailController.text.trim());
+    try {
+      //user authentication
+      if (isConfirmed()) {
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+            email: _emailController.text.trim(),
+            password: _passwordController.text.trim());
+        //user details
+        addUserDetails(_firstNameController.text.trim(),
+            _lastNameController.text.trim(), _emailController.text.trim());
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        print('The password provided is too weak.');
+      } else if (e.code == 'email-already-in-use') {
+        print('The account already exists for that email.');
+      }
+      return null;
+    } catch (e) {
+      print(e);
+      return null;
     }
   }
 
@@ -40,6 +52,11 @@ class _RegisterPageState extends State<RegisterPage> {
     final docUser =
         FirebaseFirestore.instance.collection('users').doc(firebaseUser!.uid);
 
+    firebaseUser.updateDisplayName(
+        '${_firstNameController.text.trim()} ${_lastNameController.text.trim()}');
+    firebaseUser.updateEmail('${_emailController.text.trim()}');
+    // firebaseUser.updatePhoneNumber(PhoneAuthCredential d);
+
     final user = usermodel.User(
         id: docUser.id,
         firstName: _firstNameController.text.trim(),
@@ -47,7 +64,9 @@ class _RegisterPageState extends State<RegisterPage> {
         email: _emailController.text.trim(),
         location: 'Locale',
         date: 'Date',
-        phoneNo: '300');
+        phoneNo: '300',
+        userRole: 'Customer');
+
     final json = user.toJson();
     await docUser.set(json);
   }

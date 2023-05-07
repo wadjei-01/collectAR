@@ -4,15 +4,15 @@ part 'user_model.g.dart';
 
 @HiveType(typeId: 0)
 class User {
-  User({
-    this.id = '',
-    required this.firstName,
-    required this.lastName,
-    required this.email,
-    required this.date,
-    required this.phoneNo,
-    required this.location,
-  });
+  User(
+      {this.id = '',
+      required this.firstName,
+      required this.lastName,
+      required this.email,
+      required this.date,
+      required this.phoneNo,
+      required this.location,
+      required this.userRole});
 
   @HiveField(0)
   String id;
@@ -28,6 +28,8 @@ class User {
   final String phoneNo;
   @HiveField(6)
   final String location;
+  @HiveField(7)
+  final String userRole;
 
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -36,6 +38,18 @@ class User {
         'email': email,
         'date': date,
         'phoneNo': phoneNo,
-        'location': location
+        'location': location,
+        'userRole': userRole
       };
+
+  static User fromJson(Map<String, dynamic> json) => User(
+        id: json['id'],
+        firstName: json['firstName'],
+        lastName: json['lastName'],
+        email: json['email'],
+        date: json['date'],
+        phoneNo: json['phoneNo'],
+        location: json['location'],
+        userRole: json['userRole'],
+      );
 }

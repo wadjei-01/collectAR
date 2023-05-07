@@ -6,15 +6,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:navbar/otherpages/arsession/arsession.dart';
-import 'package:navbar/otherpages/productpage/product_model.dart';
+import 'package:ionicons/ionicons.dart';
+import 'package:navbar/arsession/arsession.dart';
+import 'package:navbar/homepage/homepage_controller.dart';
+import 'package:navbar/productpage/product_controller.dart';
+import 'package:navbar/productpage/product_model.dart';
 import 'package:navbar/theme/fonts.dart';
 
 import 'cart_page/cartcontroller.dart';
+import 'collections/newcollectioncontroller.dart';
+import 'theme/globals.dart';
 import 'orders/orders_model.dart';
-import 'otherpages/globals.dart';
-import 'otherpages/productpage/product_controller.dart';
-import 'otherpages/productpage/product_view.dart';
 
 class CustomExpansionTile extends StatefulWidget {
   CustomExpansionTile({super.key, required this.title, required this.text});
@@ -95,21 +97,22 @@ class Scroller {
 }
 
 class CustomAppBar extends StatefulWidget with PreferredSizeWidget {
-  CustomAppBar({
-    Key? key,
-    required this.scrollController,
-    required this.startAppBarColor,
-    required this.targetAppBarColor,
-    required this.startIconColor,
-    required this.targetIconColor,
-    required this.sideButtonExists,
-    this.backArrow,
-    this.sideButton,
-    this.sideBtnBoolean,
-    this.sideBtnNewColor,
-    this.boolValueCallback,
-    this.product,
-  }) : super(key: key);
+  CustomAppBar(
+      {Key? key,
+      required this.scrollController,
+      required this.startAppBarColor,
+      required this.targetAppBarColor,
+      required this.startIconColor,
+      required this.targetIconColor,
+      required this.sideButtonExists,
+      this.backArrow,
+      this.sideButton,
+      this.sideBtnBoolean,
+      this.sideBtnNewColor,
+      this.boolValueCallback,
+      this.product,
+      this.title})
+      : super(key: key);
   ScrollController scrollController;
   Color startAppBarColor;
   // Color.fromARGB(0, 255, 255, 255);
@@ -121,6 +124,7 @@ class CustomAppBar extends StatefulWidget with PreferredSizeWidget {
   Color targetIconColor;
   //  = AppColor.black;
 
+  String? title;
   IconData? backArrow;
   IconData? sideButton;
   bool? sideBtnBoolean;
@@ -178,23 +182,38 @@ class _CustomAppBarState extends State<CustomAppBar> {
         padding: EdgeInsets.symmetric(horizontal: 30.w),
         child:
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          GestureDetector(
-            onTap: () {
-              Get.delete<ProductController>();
-              Get.back();
-            },
-            child: Container(
-              width: 250.r,
-              height: 250.r,
-              color: appBarColor,
-              child: Center(
-                child: Icon(
-                  Icons.arrow_back_ios,
-                  color: iconColor,
-                  size: 60.r,
+          Row(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  Get.delete<ProductController>();
+                  Get.back();
+                },
+                child: Container(
+                  width: 250.r,
+                  height: 250.r,
+                  color: appBarColor,
+                  child: Center(
+                    child: Icon(
+                      Icons.arrow_back_ios,
+                      color: iconColor,
+                      size: 60.r,
+                    ),
+                  ),
                 ),
               ),
-            ),
+              widget.title != null
+                  ? SizedBox(
+                      width: 600.w,
+                      child: Text(
+                        widget.title!,
+                        overflow: TextOverflow.ellipsis,
+                        style: BoldHeaderstextStyle(
+                            fontSize: 55.sp, color: AppColors.secondary),
+                      ),
+                    )
+                  : SizedBox()
+            ],
           ),
           widget.sideButtonExists == true
               ? InkWell(
@@ -223,9 +242,10 @@ class _CustomAppBarState extends State<CustomAppBar> {
   }
 }
 
-TextFormField textField(TextEditingController textController, [String? hint]) {
+TextFormField textField(TextEditingController textController,
+    {String? hint, TextInputType? textInputType}) {
   return TextFormField(
-    keyboardType: TextInputType.emailAddress,
+    keyboardType: textInputType ?? TextInputType.emailAddress,
     controller: textController,
     decoration: InputDecoration(
       enabledBorder: OutlineInputBorder(
@@ -399,7 +419,7 @@ class CarouselIndicator extends StatelessWidget {
   }
 }
 
-onCardPressed(Product data) async {
+displayProduct(Product data) async {
   try {
     Get.toNamed(
       "/product",
@@ -503,14 +523,154 @@ class ProductCard extends StatelessWidget {
   }
 }
 
+class ProductCard_2 extends StatelessWidget {
+  ProductCard_2(
+      {Key? key,
+      required this.storedProducts,
+      this.controller,
+      required this.onPressed,
+      this.size})
+      : super(key: key);
+
+  Product storedProducts;
+  final void Function() onPressed;
+  dynamic controller;
+  Size? size;
+
+  @override
+  Widget build(BuildContext context) {
+    Color color = HexColor(storedProducts.imageColour);
+    Color textColor = color.computeLuminance() < 0.6
+        ? HexColor(storedProducts.imageColour)
+        : AppColors.darken(HexColor(storedProducts.imageColour), 0.3);
+    dynamic value = 'something';
+
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        width: size?.width ?? 400.w,
+        height: size?.height ?? 500.h,
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(30.r),
+          color: HexColor(storedProducts.imageColour),
+          image: DecorationImage(
+              image: AssetImage('assets/images/gridbg.png'),
+              fit: BoxFit.fill,
+              opacity: 0.3),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.3),
+              spreadRadius: 1.5,
+              blurRadius: 5,
+              offset: Offset(0, 3), // changes position of shadow
+            ),
+          ],
+        ),
+        child: Stack(children: [
+          Align(
+            alignment: Alignment.topCenter,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 60.h,
+                ),
+                TweenAnimationBuilder<double>(
+                    tween: Tween<double>(begin: 0.0, end: 1.0),
+                    curve: Curves.easeInOut,
+                    duration: const Duration(seconds: 1),
+                    builder: ((context, double opacity, child) {
+                      return Opacity(
+                        opacity: opacity,
+                        child: Center(
+                          child: CachedNetworkImage(
+                            imageUrl: storedProducts.images[0],
+                            height: 250.h,
+                          ),
+                        ),
+                      );
+                    })),
+                SizedBox(
+                  height: 30.h,
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 50.w),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '₵ ${storedProducts.price.toStringAsFixed(2)}',
+                        style: const TextStyle(
+                            fontFamily: 'Montserrat Black',
+                            fontSize: 13,
+                            color: Colors.white),
+                      ),
+                      GestureDetector(
+                          onTap: () {
+                            final cartController = Get.find<CartController>();
+                            final checker =
+                                cartController.checkID(storedProducts.id);
+
+                            if (checker[0] == false) {
+                              value = cartController.addProductToCart(
+                                  storedProducts.id,
+                                  storedProducts.images[0],
+                                  storedProducts.name,
+                                  storedProducts.price,
+                                  1,
+                                  HexColor(storedProducts.imageColour));
+                              Get.snackbar(
+                                  '', '${storedProducts.name} is added to cart',
+                                  snackPosition: SnackPosition.TOP,
+                                  instantInit: false);
+                            } else {
+                              cartController.deleteProductFromCart(checker[1]);
+                            }
+
+                            if (controller != null) {
+                              controller?.update();
+                            }
+                          },
+                          child: controller?.switchIcons(storedProducts.id) ??
+                              SizedBox())
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              alignment: Alignment.centerLeft,
+              height: 100.h,
+              width: double.infinity,
+              color: Colors.white,
+              child: Padding(
+                padding: EdgeInsets.only(left: 50.w),
+                child: Text(
+                  storedProducts.name,
+                  maxLines: 1,
+                  style: MediumHeaderStyle(color: textColor, fontSize: 35.sp),
+                ),
+              ),
+            ),
+          )
+        ]),
+      ),
+    );
+  }
+}
+
 class LoadingIndicator extends StatelessWidget {
   LoadingIndicator({Key? key, this.progress}) : super(key: key);
   double? progress;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 70.r,
-      width: 70.r,
+      height: 40.r,
+      width: 40.r,
       child: CircularProgressIndicator(
         color: AppColors.primary,
         value: progress,
@@ -596,12 +756,12 @@ Container orderContainer(int index,
                   decoration: BoxDecoration(
                       color: Color(
                         order?.items[index].color ??
-                            cartController!.box.getAt(index)!.color,
+                            cartController!.cartBox.getAt(index)!.color,
                       ),
                       borderRadius: BorderRadius.circular(70.r)),
                   child: CachedNetworkImage(
                       imageUrl: order?.items[index].image ??
-                          cartController!.box.getAt(index)!.image),
+                          cartController!.cartBox.getAt(index)!.image),
                 ),
                 SizedBox(
                   width: 30.w,
@@ -613,10 +773,10 @@ Container orderContainer(int index,
                         width: 500.w,
                         child: Text(
                           order?.items[index].name ??
-                              cartController!.box.getAt(index)!.name,
+                              cartController!.cartBox.getAt(index)!.name,
                           style: MediumHeaderStyle(
                               color: Color(order?.items[index].color ??
-                                  cartController!.box.getAt(index)!.color),
+                                  cartController!.cartBox.getAt(index)!.color),
                               fontSize: 40.sp,
                               overFlow: TextOverflow.ellipsis),
                         )),
@@ -624,7 +784,7 @@ Container orderContainer(int index,
                         width: 500.w,
                         child: Text(
                           order?.items[index].id ??
-                              cartController!.box.getAt(index)!.id,
+                              cartController!.cartBox.getAt(index)!.id,
                           style: RegularHeaderStyle(
                             fontSize: 35.sp,
                           ),
@@ -634,12 +794,12 @@ Container orderContainer(int index,
               ],
             ),
             Text(
-              '₵ ${order?.items[index].price.toStringAsFixed(2) ?? cartController!.box.getAt(index)!.price.toStringAsFixed(2)}',
+              '₵ ${order?.items[index].price.toStringAsFixed(2) ?? cartController!.cartBox.getAt(index)!.price.toStringAsFixed(2)}',
               style: RegularHeaderStyle(),
             )
           ],
         ),
-        index != ((order?.items.length ?? cartController!.box.length) - 1)
+        index != ((order?.items.length ?? cartController!.cartBox.length) - 1)
             ? getDivider()
             : SizedBox(
                 height: 0.h,
@@ -704,5 +864,55 @@ Color? showUpdate(List<Status> stats, String name, int index) {
     return AppColors.primary;
   } else {
     return AppColors.title;
+  }
+}
+
+class ColorPicker extends StatelessWidget {
+  ColorPicker({super.key});
+  final controller = Get.find<NewCollectionsController>();
+
+  @override
+  Widget build(BuildContext context) {
+    // controller.screenPickerColor = controller.colorList[0];
+
+    return SizedBox(
+        height: 120.h,
+        width: double.infinity,
+        child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: controller.colorList.length,
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (context, index) {
+              return Obx(() {
+                return GestureDetector(
+                  onTap: () {
+                    controller.onTap(index);
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      left: index == 0 ? 0 : 16.w,
+                    ),
+                    child: Center(
+                      child: Container(
+                        width: 70.r,
+                        height: 70.r,
+                        decoration: BoxDecoration(
+                            color: controller.colorList[index],
+                            borderRadius: BorderRadius.circular(35.r)),
+                        child: controller.selected.value == index
+                            ? Center(
+                                child: Icon(
+                                  Icons.check_circle_outline_rounded,
+                                  color: Colors.white,
+                                  size: 60.r,
+                                ),
+                              )
+                            : const SizedBox(),
+                      ),
+                    ),
+                  ),
+                );
+              });
+            }));
   }
 }

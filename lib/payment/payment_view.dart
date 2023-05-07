@@ -1,10 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:navbar/cart_page/cartcontroller.dart';
-import 'package:navbar/orders/orders_model.dart';
 import 'package:navbar/orders/orders_view.dart';
 import 'package:navbar/payment/payment_controller.dart';
 import 'package:navbar/theme/fonts.dart';
@@ -13,15 +11,14 @@ import 'package:navbar/models/user_model.dart' as userModel;
 import 'package:navbar/box/boxes.dart';
 import 'package:slide_to_act/slide_to_act.dart';
 
-import '../main.dart';
-import '../otherpages/globals.dart';
+import '../theme/globals.dart';
 
 class PaymentPage extends StatelessWidget {
   const PaymentPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    userModel.User userDets = box.get('user');
+    userModel.User userDets = Boxes.getUser().get('user')!;
     final sController = ScrollController();
     final controller = Get.put(PaymentController());
     final cartController = Get.find<CartController>();
@@ -97,7 +94,7 @@ class PaymentPage extends StatelessWidget {
                   child: ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
-                      itemCount: cartController.box.length,
+                      itemCount: cartController.cartBox.length,
                       itemBuilder: (context, index) {
                         return orderContainer(index,
                             cartController: cartController);
@@ -119,7 +116,7 @@ class PaymentPage extends StatelessWidget {
                       style: MediumHeaderStyle(fontSize: 50.sp),
                     ),
                     Text(
-                      '₵${cartController.totalCost().toStringAsFixed(2)}',
+                      '₵${cartController.getTotalCost()}',
                       style: MediumHeaderStyle(fontSize: 50.sp),
                     ),
                   ],
@@ -151,7 +148,7 @@ class PaymentPage extends StatelessWidget {
                       style: RegularHeaderStyle(fontSize: 45.sp),
                     ),
                     Text(
-                      '₵${(cartController.totalCost() * 0.01).toStringAsFixed(2)}',
+                      '₵${(double.parse(cartController.getTotalCost()) * 0.01).toStringAsFixed(2)}',
                       style: RegularHeaderStyle(fontSize: 45.sp),
                     ),
                   ],
@@ -171,7 +168,7 @@ class PaymentPage extends StatelessWidget {
                       style: MediumHeaderStyle(fontSize: 50.sp),
                     ),
                     Text(
-                      '₵${cartController.overallCost().toStringAsFixed(2)}',
+                      '₵${cartController.getOverallCost()}',
                       style: MediumHeaderStyle(fontSize: 50.sp),
                     ),
                   ],
@@ -192,7 +189,7 @@ class PaymentPage extends StatelessWidget {
                       style: MediumHeaderStyle(fontSize: 50.sp),
                     ),
                     Text(
-                      '₵${cartController.overallCost().toStringAsFixed(2)}',
+                      '₵${cartController.getOverallCost()}',
                       style: MediumHeaderStyle(fontSize: 50.sp),
                     ),
                   ],
@@ -219,7 +216,7 @@ class PaymentPage extends StatelessWidget {
                       ],
                     ),
                     Text(
-                      '₵${cartController.overallCost().toStringAsFixed(2)}',
+                      '₵${cartController.getOverallCost()}',
                       style: RegularHeaderStyle(fontSize: 45.sp),
                     ),
                   ],
@@ -249,7 +246,7 @@ class PaymentPage extends StatelessWidget {
                     Future.delayed(Duration(seconds: 1), () {
                       //TODO: Add addOrdertoFB function here
                       PaymentController.addToFB();
-                      cartController.box.clear();
+                      cartController.cartBox.clear();
                       cartController.update();
                       Get.off(() => OrdersPage(),
                           arguments: PaymentController.oID);
