@@ -1,4 +1,4 @@
-# collectAR
+<img width="1280" alt="image" src="https://github.com/wadjei-01/collectAR/assets/101362617/4da9b804-dff6-49dc-8a7e-f0229652bbc2"># collectAR
 
 **collectAR** is a furniture-based e-commerce mobile application that leverages Augmented Reality (AR) technology to enhance the shopping experience for customers. By utilizing AR, customers can view each product in a realistic and immersive way, reducing uncertainty and increasing confidence in their purchasing decisions.
 
@@ -24,6 +24,16 @@ To install and run collectAR on your mobile device, follow these steps:
 3. Set up the required configurations, such as Firebase credentials and API keys.
 4. Build the project and deploy it to your mobile device using the development environment of your choice (Android Studio, Xcode, etc.).
 5. Launch the collectAR mobile application and start exploring furniture products with the power of Augmented Reality.
+
+![Home Screen](https://github.com/wadjei-01/collectAR/assets/101362617/d24d2a25-9f81-458a-bcaf-b6d470301c23) ![Product Screen](https://github.com/wadjei-01/collectAR/assets/101362617/2dcb431c-0c32-4b2c-bcd2-6c78b8fd15b0) 
+![Product Screen 2](https://github.com/wadjei-01/collectAR/assets/101362617/b2e861ff-192c-4541-828d-52aa8cc2e2a6) ![AR Screen](https://github.com/wadjei-01/collectAR/assets/101362617/1ccd7df5-2453-466d-ac4a-8fb6e4542ec7)
+
+
+
+
+
+
+
 
 For more information on how to install this application, visit https://docs.flutter.dev/
 
