@@ -26,15 +26,8 @@ To install and run collectAR on your mobile device, follow these steps:
 5. Launch the collectAR mobile application and start exploring furniture products with the power of Augmented Reality.
 For more information on how to install this application, visit https://docs.flutter.dev/
 
-<img width="500" alt="Home Screen" src="https://github.com/wadjei-01/collectAR/assets/101362617/d24d2a25-9f81-458a-bcaf-b6d470301c23">
-<img width="500" alt="Product Screen" src="https://github.com/wadjei-01/collectAR/assets/101362617/2dcb431c-0c32-4b2c-bcd2-6c78b8fd15b0">
-<img width="500" alt="Product Screen 2" src="https://github.com/wadjei-01/collectAR/assets/101362617/b2e861ff-192c-4541-828d-52aa8cc2e2a6">
-<img width="500" alt="AR Screen" src="https://github.com/wadjei-01/collectAR/assets/101362617/1ccd7df5-2453-466d-ac4a-8fb6e4542ec7">
-
-
-
-
-
+# Demo
+https://github.com/wadjei-01/collectAR/assets/101362617/1f76d883-7bc7-4629-b1a4-90f654a4c280
 
 
 
